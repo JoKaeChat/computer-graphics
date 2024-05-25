@@ -37,16 +37,20 @@ let vertices2 = [
    
 ];
 
+const HEAD_THROTLE = 15;
+const ARM_THROTLE = 20;
+const WHEEL_THROTLE = 15;
 
 let torsoId = 0;
 let headId  = 1;
 let head1Id = 1;
 let head2Id = 13;
+let head3Id = 18;
 let leftEarId = 2;
 let rightEarId = 3;
 let leftUpperArmId = 4;
 let rightUpperArmId = 5;
-let leftUpperArmId2 = 18;
+let leftUpperArmId2 = 20;
 let rightUpperArmId2 = 19;
 let carId = 6;
 let leftFrontWheelId = 7;
@@ -61,15 +65,15 @@ let leftHandId = 11;
 let rightHandId = 12;
 
 
-let torsoHeight = 5.0;
+let torsoHeight = 6.0;
 let torsoWidth = 2.0;
 let upperArmHeight = 3.0;
 let upperArmWidth  = 1.0;
 let carWidth = 10.0;
 let carHeight = 4.0;
-let carZ = 5.0;
-let wheelWidth = 1.0;
-let wheelHeight = 1.5;
+let carZ = 10.0;
+let wheelWidth = 2.0;
+let wheelHeight = 2.0;
 let headHeight = 3.5;
 let headWidth = 6.0;
 let earWidth = 2.0;
@@ -80,7 +84,12 @@ let handHeight = 1.0;
 let numNodes = 19;
 let angle = 0;
 
-let theta = [0, 0, 0, 0, 0, 0,0, 0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+let theta = [-180, 0, 0, 0, 70, 70,
+                0, 0,0,0,0, 
+                0,0,0,0,0,
+                0,0,0,0,0,
+                0,0,0,0,0,
+                0,0,0,0,0];
 
 let numVertices = 24;
 
@@ -130,18 +139,22 @@ function initNodes(Id) {
 
     case torsoId:
 
+
     m = rotate(theta[torsoId], 0, 1, 0 );
+
     figure[torsoId] = createNode( m, torso, null, headId );
     break;
 
     case headId:
     case head1Id:
     case head2Id:
+    case head3Id:
 
 
     m = translate(0.0, torsoHeight+0.5*headHeight, 0.0);
-	m = mult(m, rotate(theta[head1Id], 1, 0, 0))
+	m = mult(m, rotate(theta[head1Id], 1, 0, 0));
 	m = mult(m, rotate(theta[head2Id], 0, 1, 0));
+    m = mult(m, rotate(theta[head3Id], 0, 0, 1));
     m = mult(m, translate(0.0, -0.5*headHeight, 0.0));
     figure[headId] = createNode( m, head, leftUpperArmId, leftEarId);
     break;
@@ -163,7 +176,7 @@ function initNodes(Id) {
     case leftUpperArmId:
     case leftUpperArmId2:
 
-    m = translate(-(torsoWidth), 0.2*torsoHeight, 0.0);
+    m = translate(-(torsoWidth), 0.6*torsoHeight, -2.0);
 	m = mult(m, rotate(theta[leftUpperArmId], 1, 0, 0));
     m = mult(m, rotate(theta[leftUpperArmId2], 0, 1, 0));
     figure[leftUpperArmId] = createNode( m, leftUpperArm, rightUpperArmId, leftHandId );
@@ -173,7 +186,7 @@ function initNodes(Id) {
     case rightUpperArmId:
     case rightUpperArmId2:
 
-    m = translate(torsoWidth, 0.2*torsoHeight, 0.0);
+    m = translate(torsoWidth, 0.6*torsoHeight, -2.0);
 	m = mult(m, rotate(theta[rightUpperArmId], 1, 0, 0));
     m = mult(m, rotate(theta[rightUpperArmId2], 0, 1, 0));
     figure[rightUpperArmId] = createNode( m, rightUpperArm, carId, rightHandId );
@@ -195,8 +208,8 @@ function initNodes(Id) {
 
 
    case carId:
-        // 0.9 * carHeight
-   m = translate(0,-torsoHeight + 0.2 * carHeight, 0);
+        
+   m = translate(0,  -torsoHeight*0.3, 0);
    m = mult(m, rotate(theta[carId], 1,0,0));
    figure[carId] = createNode( m, car, null, leftFrontWheelId);
    break;
@@ -204,7 +217,7 @@ function initNodes(Id) {
    case leftFrontWheelId:
    case leftFrontWheelId2 : 
 
-   m = translate(-(carWidth/2), 0.0 , 0.0);
+   m = translate(-(carWidth/2), 0.0 , -wheelWidth*1.5);
    m = mult(m, rotate(theta[leftFrontWheelId], 1, 0, 0));
    m = mult(m, rotate(theta[leftFrontWheelId2], 0, 1, 0));
    figure[leftFrontWheelId] = createNode(m, leftFrontWheel, rightFrontWheelId, leftBackWheelId);
@@ -213,7 +226,7 @@ function initNodes(Id) {
     case leftBackWheelId:
     case leftBackWheelId2 :
 
-   m = translate(0.0 , 0.0 , -2.0);
+   m = translate(0.0 , 0.0 ,  carZ*0.6 );
    m = mult(m, rotate(theta[leftBackWheelId], 1, 0, 0));
    m = mult(m, rotate(theta[leftBackWheelId2], 0, 1, 0));
    figure[leftBackWheelId] = createNode(m, leftBackWheel, null, null);
@@ -222,7 +235,7 @@ function initNodes(Id) {
     case rightFrontWheelId:
     case rightFrontWheelId2 :
 
-   m = translate(carWidth/2 , 0.0, 0.0);
+   m = translate(carWidth/2, 0.0,-wheelWidth*1.5);
    m = mult(m, rotate(theta[rightFrontWheelId], 1, 0, 0));
    m = mult(m, rotate(theta[rightFrontWheelId2], 0, 1, 0));
    figure[rightFrontWheelId] = createNode(m, rightFrontWheel, null, rightBackWheelId);
@@ -231,12 +244,11 @@ function initNodes(Id) {
    case rightBackWheelId:
    case rightBackWheelId2 :
 
-   m = translate(0.0, 0.0, -2.0);
+   m = translate(0.0, 0.0,  carZ*0.6 );
    m = mult(m, rotate(theta[rightBackWheelId], 1, 0, 0));
    m = mult(m, rotate(theta[rightBackWheelId2], 0, 1, 0));
    figure[rightBackWheelId] = createNode(m, rightBackWheel, null, null);
    break;
-
    }
 }
 
@@ -331,7 +343,7 @@ function leftFrontWheel(){
 }
 
 function leftBackWheel(){
-    instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,-2.0));
+    instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,0.0));
     instanceMatrix = mult(instanceMatrix, scale4(wheelWidth,wheelHeight,wheelHeight ) );
     gl.uniformMatrix4fv(modelViewMatrixLoc,false, flatten(instanceMatrix));
     gl.uniform4f(colorLoc,255/256,212/256,0/256, 1.0); // yellow
@@ -342,15 +354,15 @@ function rightFrontWheel(){
     instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,0.0));
     instanceMatrix = mult(instanceMatrix, scale4(wheelWidth,wheelHeight,wheelHeight ) );
     gl.uniformMatrix4fv(modelViewMatrixLoc,false, flatten(instanceMatrix));
-    gl.uniform4f(colorLoc,0/256,128/256,0/256, 1.0); // green
+    gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); // green
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
 function rightBackWheel(){
-    instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,-2.0));
+    instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,0.0));
     instanceMatrix = mult(instanceMatrix, scale4(wheelWidth,wheelHeight,wheelHeight ) );
     gl.uniformMatrix4fv(modelViewMatrixLoc,false, flatten(instanceMatrix));
-    gl.uniform4f(colorLoc,0/256,0/256,128/256, 1.0); // black
+    gl.uniform4f(colorLoc,255/256,212/256,0/256, 1.0); // yellow 
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
@@ -423,6 +435,7 @@ window.onload = function init() {
     trapezoid();
 
     vBuffer = gl.createBuffer();
+    gl.enable(gl.DEPTH_TEST);
 
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
     gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
@@ -436,8 +449,8 @@ window.onload = function init() {
         initNodes(torsoId);
     };
         document.getElementById("slider1").onchange = function(event) {
-        theta[head1Id] = event.target.value;
-        initNodes(head1Id);
+        theta[head3Id] = event.target.value;
+        initNodes(head3Id);
     };
 
     document.getElementById("slider2").onchange = function(event) {
@@ -455,6 +468,46 @@ window.onload = function init() {
          theta[head2Id] = event.target.value;
          initNodes(head2Id);
     };
+
+    document.addEventListener("keydown",(e) => {
+        if(e.key == 'ArrowRight'){
+            if(theta[head3Id]  >= -HEAD_THROTLE){
+                theta[head3Id] -= 1;
+                theta[leftUpperArmId2] -= 2;
+                theta[rightUpperArmId2] -= 2;
+                
+                initNodes(head3Id);
+                initNodes(rightUpperArmId2);
+                initNodes(leftUpperArmId2);
+                
+            }
+        }
+
+        else if(e.key == 'ArrowLeft'){
+            if(theta[head3Id]  <= HEAD_THROTLE){
+                theta[head3Id] += 1;
+                theta[leftUpperArmId2] += 2;
+                theta[rightUpperArmId2] += 2;
+                
+                initNodes(head3Id);
+                initNodes(leftUpperArmId2);
+                initNodes(rightUpperArmId2);
+            } 
+        }
+    });
+
+    document.addEventListener("keyup",(e)=>{
+        if(e.key == 'ArrowRight' || e.key == 'ArrowLeft'){
+            theta[head3Id] = 0;
+            theta[leftUpperArmId2] = 0;
+            theta[rightUpperArmId2] = 0;
+
+            initNodes(head3Id);
+            initNodes(leftUpperArmId2);
+            initNodes(rightUpperArmId2);
+        }
+       
+    });
 
     for(let i=0; i<numNodes; i++) initNodes(i);
 
