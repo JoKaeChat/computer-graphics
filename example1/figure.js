@@ -37,9 +37,16 @@ let vertices2 = [
    
 ];
 
+let planeVertices = [
+    vec4(-1000.0, -2.0,  -1000.0, 1.0),
+    vec4(-1000.0, -2.0,  1000.0 , 1.0),
+    vec4(1000.0 , -2.0,  1000.0 , 1.0),
+    vec4(1000.0, -2.0,  -1000.0, 1.0),
+];
+
+
 const HEAD_THROTLE = 15;
-const ARM_THROTLE = 20;
-const WHEEL_THROTLE = 15;
+
 
 let torsoId = 0;
 let headId  = 1;
@@ -93,8 +100,8 @@ let theta = [-180, 0, 0, 0, 70, 70,
 
 let numVertices = 24;
 
-let stack = [];
 
+let stack = [];
 let figure = [];
 let normalsArray = [];
 
@@ -106,7 +113,7 @@ let aspect ;
 let near = 0.1;
 let far = 1000.0;
 
-let lightPosition = vec4(0.0, 10.0,10.0, 0.0 ); 
+let lightPosition = vec4(-0.0, -0.0, 20.0, 0.0 ); 
 let lightAmbient = vec4(0.2, 0.2, 0.2, 0.2 ); 
 let lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 let lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 ); 
@@ -114,6 +121,10 @@ let materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
 let materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0); 
 let materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
 let materialShininess = 100.0;
+
+let moveX = 0.0;
+let moveY = 0.0;
+let moveZ = 0.0;
 
 for( let i=0; i<numNodes; i++) figure[i] = createNode(null, null, null, null);
 
@@ -234,7 +245,7 @@ function initNodes(Id) {
    case leftFrontWheelId2 : 
 
    m = translate(-(carWidth/2), 0.0 , -wheelWidth*1.5);
-   m = mult(m, rotate(theta[leftFrontWheelId], 0, 0, 1));
+   m = mult(m, rotate(theta[leftFrontWheelId], 1, 0, 0));
    m = mult(m, rotate(theta[leftFrontWheelId2], 0, 1, 0));
    figure[leftFrontWheelId] = createNode(m, leftFrontWheel, leftBackWheelId, null);
    break;
@@ -377,7 +388,7 @@ function rightBackWheel(){
     instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,0.0));
     instanceMatrix = mult(instanceMatrix, scale4(wheelWidth,wheelHeight,wheelHeight ) );
     gl.uniformMatrix4fv(modelViewMatrixLoc,false, flatten(instanceMatrix));
-    gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); // yellow 
+    gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); 
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
@@ -440,6 +451,26 @@ function trapezoid()
    quad2( 5, 4, 0, 1 );
 }
 
+function plane(){
+    let t1 = subtract(planeVertices[0], planeVertices[1]);
+    let t2 = subtract(planeVertices[3], planeVertices[0]);
+    let normal = cross(t1, t2);
+
+    pointsArray.push(planeVertices[0]);
+    pointsArray.push(planeVertices[1]);
+    pointsArray.push(planeVertices[2]);
+    pointsArray.push(planeVertices[0]);
+    pointsArray.push(planeVertices[2]);
+    pointsArray.push(planeVertices[3]);
+
+    console.log(pointsArray);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+}
 
 window.onload = function init() {
 
@@ -466,7 +497,6 @@ window.onload = function init() {
 
     gl.uniformMatrix4fv(gl.getUniformLocation( program, "modelViewMatrix"), false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( gl.getUniformLocation( program, "projectionMatrix"), false, flatten(projectionMatrix) );
-
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
     colorLoc = gl.getUniformLocation(program,"uColor");
 
@@ -482,6 +512,7 @@ window.onload = function init() {
 
     cube();
     trapezoid();
+    plane();
 
     vBuffer = gl.createBuffer();
     gl.enable(gl.DEPTH_TEST);
@@ -500,7 +531,6 @@ window.onload = function init() {
     const vNormal = gl.getAttribLocation(program, 'vNormal');
     gl.vertexAttribPointer(vNormal,3,gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray(vNormal);
-
 
 
     //---------------------------------------------------------------//
@@ -525,66 +555,281 @@ window.onload = function init() {
     };
  
     document.getElementById("slider10").onchange = function(event) {
-         theta[leftFrontWheelId2] = event.target.value;
+         theta[rightBackWheelId] = event.target.value;
          
-         initNodes(leftFrontWheelId2);
+         initNodes(rightBackWheelId);
       
     };
 
-    document.addEventListener("keydown",(e) => {
-        if(e.key == 'ArrowRight'){
-            if(theta[head3Id]  >= -HEAD_THROTLE){
-                theta[head3Id] -= 1;
-                theta[leftUpperArmId2] -= 2;
-                theta[rightUpperArmId2] -= 2;
-                theta[leftFrontWheelId2] -= 2;
-                theta[rightFrontWheelId2] -= 2;
-           
-                initNodes(head3Id);
-                initNodes(rightUpperArmId2);
-                initNodes(leftUpperArmId2);
-                initNodes(leftFrontWheelId2);
-                initNodes(rightFrontWheelId2);
+    let upKeyPressed = false;
+    let rightKeyPressed = false;
+    let downKeyPressed = false;
+    let leftKeyPressed = false;
 
-            }
+
+    document.addEventListener("keydown", (e) => {
+
+        if (e.key == 'ArrowUp') {
+            upKeyPressed = true;
         }
 
-        else if(e.key == 'ArrowLeft'){
-            if(theta[head3Id]  <= HEAD_THROTLE){
-                theta[head3Id] += 1;
+        if(e.key == 'ArrowRight'){
+            rightKeyPressed = true;
+        }
+
+        if(e.key == 'ArrowLeft'){
+            leftKeyPressed = true;
+        }
+
+        if(e.key == 'ArrowDown'){
+            downKeyPressed = true;
+        }
+
+        //오른쪽 키만
+        if(!upKeyPressed && rightKeyPressed && !leftKeyPressed && !downKeyPressed){
+            if (theta[head3Id] >= -HEAD_THROTLE) {
+                theta[head3Id] -= 1;
                 theta[leftUpperArmId2] += 2;
                 theta[rightUpperArmId2] += 2;
                 theta[leftFrontWheelId2] += 2;
                 theta[rightFrontWheelId2] += 2;
+                theta[leftBackWheelId2] += 2;
+                theta[rightBackWheelId2] += 2;
+
+                initNodes(head3Id);
+                initNodes(rightUpperArmId2);
+                initNodes(leftUpperArmId2);
+                initNodes(leftFrontWheelId2);
+                initNodes(rightFrontWheelId2);  
+                initNodes(leftBackWheelId2);
+                initNodes(rightBackWheelId2);      
                 
+            }
+        }
+
+         //왼쪽 키만
+         if(!upKeyPressed && !rightKeyPressed && leftKeyPressed && !downKeyPressed){
+            if (theta[head3Id] <= HEAD_THROTLE) {
+                theta[head3Id] += 1;
+                theta[leftUpperArmId2] -= 2;
+                theta[rightUpperArmId2] -= 2;
+                theta[leftFrontWheelId2] -= 2;
+                theta[rightFrontWheelId2] -= 2;
+                theta[leftBackWheelId2] -= 2;
+                theta[rightBackWheelId2] -= 2;
                 initNodes(head3Id);
                 initNodes(leftUpperArmId2);
                 initNodes(rightUpperArmId2);
                 initNodes(leftFrontWheelId2);
                 initNodes(rightFrontWheelId2);
-
-            } 
+                initNodes(leftBackWheelId2);
+                initNodes(rightBackWheelId2);  
+            }
         }
-    });
 
-    document.addEventListener("keyup",(e)=>{
-        if(e.key == 'ArrowRight' || e.key == 'ArrowLeft'){
+        // 앞키만
+        if(upKeyPressed && !rightKeyPressed && !leftKeyPressed){
+            theta[rightFrontWheelId] -= 10;
+            theta[leftFrontWheelId] -= 10;
+            theta[leftBackWheelId] -= 10;
+            theta[rightBackWheelId] -= 10;
+            initNodes(leftFrontWheelId);
+            initNodes(rightFrontWheelId);
+            initNodes(leftBackWheelId);
+            initNodes(rightBackWheelId);
+            moveZ += 0.01;
+        }
+
+        // 앞키 + 오른쪽 키
+        if(upKeyPressed && rightKeyPressed){
+            theta[rightFrontWheelId] -= 10;
+            theta[leftFrontWheelId] -= 10;
+            theta[leftBackWheelId] -= 10;
+            theta[rightBackWheelId] -= 10;
+            initNodes(leftFrontWheelId);
+            initNodes(rightFrontWheelId);
+            initNodes(leftBackWheelId);
+            initNodes(rightBackWheelId);
+            moveZ += 0.01;
+
+            if (theta[head3Id] >= -HEAD_THROTLE) {
+                theta[head3Id] -= 1;
+                theta[leftUpperArmId2] += 2;
+                theta[rightUpperArmId2] += 2;
+                theta[leftFrontWheelId2] += 2;
+                theta[rightFrontWheelId2] += 2;
+                theta[leftBackWheelId2] += 2;
+                theta[rightBackWheelId2] += 2;
+
+                initNodes(head3Id);
+                initNodes(rightUpperArmId2);
+                initNodes(leftUpperArmId2);
+                initNodes(leftFrontWheelId2);
+                initNodes(rightFrontWheelId2);  
+                initNodes(leftBackWheelId2);
+                initNodes(rightBackWheelId2);      
+                moveX += 0.01;
+            }
+        }
+
+        // 앞키 + 왼쪽키
+        if(upKeyPressed && leftKeyPressed){
+            theta[rightFrontWheelId] -= 10;
+            theta[leftFrontWheelId] -= 10;
+            theta[leftBackWheelId] -= 10;
+            theta[rightBackWheelId] -= 10;
+            initNodes(leftFrontWheelId);
+            initNodes(rightFrontWheelId);
+            initNodes(leftBackWheelId);
+            initNodes(rightBackWheelId);
+            moveZ += 0.01;
+
+            if (theta[head3Id] <= HEAD_THROTLE) {
+                theta[head3Id] += 1;
+                theta[leftUpperArmId2] -= 2;
+                theta[rightUpperArmId2] -= 2;
+                theta[leftFrontWheelId2] -= 2;
+                theta[rightFrontWheelId2] -= 2;
+                theta[leftBackWheelId2] -= 2;
+                theta[rightBackWheelId2] -= 2;
+                initNodes(head3Id);
+                initNodes(leftUpperArmId2);
+                initNodes(rightUpperArmId2);
+                initNodes(leftFrontWheelId2);
+                initNodes(rightFrontWheelId2);
+                initNodes(leftBackWheelId2);
+                initNodes(rightBackWheelId2);  
+                moveX -= 0.01;
+            }
+        }
+
+
+        // 후진 뒷키만
+        if(downKeyPressed && !rightKeyPressed && !leftKeyPressed){
+            theta[rightFrontWheelId] += 10;
+            theta[leftFrontWheelId] += 10;
+            theta[leftBackWheelId] += 10;
+            theta[rightBackWheelId] += 10;
+
+            initNodes(leftFrontWheelId);
+            initNodes(rightFrontWheelId);
+            initNodes(leftBackWheelId);
+            initNodes(rightBackWheelId);
+            moveZ -= 0.01;
+         
+        }
+
+        //뒷키 + 오른쪽키
+        if(downKeyPressed && rightKeyPressed){
+            theta[rightFrontWheelId] += 10;
+            theta[leftFrontWheelId] += 10;
+            theta[leftBackWheelId] += 10;
+            theta[rightBackWheelId] += 10;
+            
+            initNodes(leftFrontWheelId);
+            initNodes(rightFrontWheelId);
+            initNodes(leftBackWheelId);
+            initNodes(rightBackWheelId);
+
+            moveZ -= 0.01;
+
+            if (theta[head3Id] >= -HEAD_THROTLE) {
+                theta[head3Id] -= 1;
+                theta[leftUpperArmId2] += 2;
+                theta[rightUpperArmId2] += 2;
+                theta[leftFrontWheelId2] += 2;
+                theta[rightFrontWheelId2] += 2;
+                theta[rightBackWheelId2] += 2;
+            
+                initNodes(head3Id);
+                initNodes(rightUpperArmId2);
+                initNodes(leftUpperArmId2);
+                initNodes(leftFrontWheelId2);
+                initNodes(rightFrontWheelId2);     
+                initNodes(rightBackWheelId2);
+                moveX += 0.01;
+            }
+        }
+
+        if(downKeyPressed && leftKeyPressed){
+            theta[rightFrontWheelId] += 10;
+            theta[leftFrontWheelId] += 10;
+            theta[leftBackWheelId] += 10;
+            theta[rightBackWheelId] += 10;
+
+            initNodes(leftFrontWheelId);
+            initNodes(rightFrontWheelId);
+            initNodes(leftBackWheelId);
+            initNodes(rightBackWheelId);
+
+            moveZ -= 0.01;
+
+            if (theta[head3Id] <= HEAD_THROTLE) {
+                theta[head3Id] += 1;
+                theta[leftUpperArmId2] -= 2;
+                theta[rightUpperArmId2] -= 2;
+                theta[leftFrontWheelId2] -= 2;
+                theta[rightFrontWheelId2] -= 2;
+                theta[rightBackWheelId2] -= 2;
+                initNodes(head3Id);
+                initNodes(leftUpperArmId2);
+                initNodes(rightUpperArmId2);
+                initNodes(leftFrontWheelId2);
+                initNodes(rightFrontWheelId2);
+                initNodes(rightBackWheelId2);
+                moveX -= 0.01;
+            }
+        }
+
+
+        
+    });
+    
+    document.addEventListener("keyup", (e) => {
+        if (e.key == 'ArrowUp') {
+            upKeyPressed = false;
+        }
+
+        if(e.key == 'ArrowRight'){
+            rightKeyPressed = false;
+        }
+
+        if(e.key == 'ArrowLeft'){
+            leftKeyPressed = false;
+        }
+
+        if(e.key == 'ArrowDown'){
+            downKeyPressed = false;
+        }
+
+
+        if (e.key == 'ArrowRight' || e.key == 'ArrowLeft') {
             theta[head3Id] = 0;
             theta[leftUpperArmId2] = 0;
             theta[rightUpperArmId2] = 0;
             theta[leftUpperArmId2] = 0;
             theta[leftFrontWheelId2] = 0;
             theta[rightFrontWheelId2] = 0;
+            theta[leftBackWheelId2] = 0;
+            theta[rightBackWheelId2] = 0;
 
             initNodes(head3Id);
             initNodes(leftUpperArmId2);
             initNodes(rightUpperArmId2);
             initNodes(leftFrontWheelId2);
             initNodes(rightFrontWheelId2);
+            initNodes(leftBackWheelId2);
+            initNodes(rightBackWheelId2);
             
+            moveX = 0;
+            moveZ = 0;
         }
-       
+
+        if(e.key == 'ArrowUp' || e.key == 'ArrowDown'){
+            moveZ = 0;
+        }
     });
+    
 
     for(let i=0; i<numNodes; i++) initNodes(i);
 
@@ -595,6 +840,11 @@ window.onload = function init() {
 let render = function() {
 
         gl.clear( gl.COLOR_BUFFER_BIT );
+
+        let translateMatrix = translate(moveX, moveY, moveZ);
+        modelViewMatrix = mult(modelViewMatrix, translateMatrix); 
+        gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix));
+
         traverse(torsoId);
         requestAnimFrame(render);
 }
