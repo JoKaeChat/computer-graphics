@@ -96,8 +96,24 @@ let numVertices = 24;
 let stack = [];
 
 let figure = [];
+let normalsArray = [];
 
+let eye=[0,2.0,40];
+let up = [0,1,0];
+let at = [0,0,0];
+let fovy = 45;
+let aspect ;
+let near = 0.1;
+let far = 1000.0;
 
+let lightPosition = vec4(-10.0, 10.0, 10.0, 0.0 ); 
+let lightAmbient = vec4(0.2, 0.2, 0.2, 0.2 ); 
+let lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+let lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 ); 
+let materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+let materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0); 
+let materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
+let materialShininess = 100.0;
 
 for( let i=0; i<numNodes; i++) figure[i] = createNode(null, null, null, null);
 
@@ -218,18 +234,17 @@ function initNodes(Id) {
    case leftFrontWheelId2 : 
 
    m = translate(-(carWidth/2), 0.0 , -wheelWidth*1.5);
-   m = mult(m, rotate(theta[leftFrontWheelId], 1, 0, 0));
+   m = mult(m, rotate(theta[leftFrontWheelId], 0, 0, 1));
    m = mult(m, rotate(theta[leftFrontWheelId2], 0, 1, 0));
-   figure[leftFrontWheelId] = createNode(m, leftFrontWheel, rightFrontWheelId, leftBackWheelId);
+   figure[leftFrontWheelId] = createNode(m, leftFrontWheel, leftBackWheelId, null);
    break;
 
     case leftBackWheelId:
     case leftBackWheelId2 :
 
-   m = translate(0.0 , 0.0 ,  carZ*0.6 );
+   m = translate(-(carWidth/2), 0.0 ,  carZ*0.3 );
    m = mult(m, rotate(theta[leftBackWheelId], 1, 0, 0));
-   m = mult(m, rotate(theta[leftBackWheelId2], 0, 1, 0));
-   figure[leftBackWheelId] = createNode(m, leftBackWheel, null, null);
+   figure[leftBackWheelId] = createNode(m, leftBackWheel, rightFrontWheelId, null);
    break;
 
     case rightFrontWheelId:
@@ -238,13 +253,13 @@ function initNodes(Id) {
    m = translate(carWidth/2, 0.0,-wheelWidth*1.5);
    m = mult(m, rotate(theta[rightFrontWheelId], 1, 0, 0));
    m = mult(m, rotate(theta[rightFrontWheelId2], 0, 1, 0));
-   figure[rightFrontWheelId] = createNode(m, rightFrontWheel, null, rightBackWheelId);
+   figure[rightFrontWheelId] = createNode(m, rightFrontWheel, rightBackWheelId, null);
    break;
 
    case rightBackWheelId:
    case rightBackWheelId2 :
 
-   m = translate(0.0, 0.0,  carZ*0.6 );
+   m = translate(carWidth/2, 0.0,  carZ*0.3 );
    m = mult(m, rotate(theta[rightBackWheelId], 1, 0, 0));
    m = mult(m, rotate(theta[rightBackWheelId2], 0, 1, 0));
    figure[rightBackWheelId] = createNode(m, rightBackWheel, null, null);
@@ -354,7 +369,7 @@ function rightFrontWheel(){
     instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,0.0));
     instanceMatrix = mult(instanceMatrix, scale4(wheelWidth,wheelHeight,wheelHeight ) );
     gl.uniformMatrix4fv(modelViewMatrixLoc,false, flatten(instanceMatrix));
-    gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); // green
+    gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); // black
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
@@ -367,28 +382,52 @@ function rightBackWheel(){
 }
 
 function quad(a, b, c, d) {
-     pointsArray.push(vertices[a]);
-     pointsArray.push(vertices[b]);
-     pointsArray.push(vertices[c]);
-     pointsArray.push(vertices[d]);
+    let t1 = subtract(vertices[b], vertices[a]);
+    let t2 = subtract(vertices[c], vertices[b]);
+    let normal = cross(t1, t2);
+
+    pointsArray.push(vertices[a]);
+    pointsArray.push(vertices[b]);
+    pointsArray.push(vertices[c]);
+    pointsArray.push(vertices[d]);
+
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+
+
 }
 
 
 function cube()
-{
+{    
     quad( 1, 0, 3, 2 );
     quad( 2, 3, 7, 6 );
     quad( 3, 0, 4, 7 );
     quad( 6, 5, 1, 2 );
     quad( 4, 5, 6, 7 );
-    quad( 5, 4, 0, 1 );
+    quad( 5, 4, 0, 1 );   
 }
 
 function quad2(a, b, c, d) {
+    let t1 = subtract(vertices[b], vertices[a]);
+    let t2 = subtract(vertices[c], vertices[b]);
+    let normal = cross(t1, t2);
+
     pointsArray.push(vertices2[a]);
     pointsArray.push(vertices2[b]);
     pointsArray.push(vertices2[c]);
     pointsArray.push(vertices2[d]);
+
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
 }
 
 function trapezoid()
@@ -421,15 +460,25 @@ window.onload = function init() {
 
     instanceMatrix = mat4();
 
-    projectionMatrix = ortho(-10.0,10.0,-10.0, 10.0,-10.0,10.0);
-    modelViewMatrix = mat4();
-
+    aspect = canvas.width / canvas.height;
+    projectionMatrix = perspective(fovy,aspect,near,far);
+    modelViewMatrix = lookAt(eye,at,up);
 
     gl.uniformMatrix4fv(gl.getUniformLocation( program, "modelViewMatrix"), false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( gl.getUniformLocation( program, "projectionMatrix"), false, flatten(projectionMatrix) );
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
     colorLoc = gl.getUniformLocation(program,"uColor");
+
+    let ambientProduct = mult(lightAmbient, materialAmbient);
+    let diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    let specularProduct = mult(lightSpecular, materialSpecular);
+
+    gl.uniform4fv(gl.getUniformLocation(program,"ambientProduct"), flatten(ambientProduct));
+    gl.uniform4fv(gl.getUniformLocation(program,"diffuseProduct"), flatten(diffuseProduct));
+    gl.uniform4fv(gl.getUniformLocation(program,"specularProduct"), flatten(specularProduct));
+    gl.uniform4fv(gl.getUniformLocation(program,"lightPosition"), flatten(lightPosition));
+    gl.uniform1f(gl.getUniformLocation(program, "shininess"),materialShininess);
 
     cube();
     trapezoid();
@@ -443,6 +492,18 @@ window.onload = function init() {
     let vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
+
+    let nBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,nBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,flatten(normalsArray), gl.STATIC_DRAW);
+
+    const vNormal = gl.getAttribLocation(program, 'vNormal');
+    gl.vertexAttribPointer(vNormal,3,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(vNormal);
+
+
+
+    //---------------------------------------------------------------//
 
         document.getElementById("slider0").onchange = function(event) {
         theta[torsoId ] = event.target.value;
@@ -458,15 +519,16 @@ window.onload = function init() {
          initNodes(leftUpperArmId);
     };
 
-
         document.getElementById("slider4").onchange = function(event) {
         theta[rightUpperArmId] = event.target.value;
         initNodes(rightUpperArmId);
     };
  
     document.getElementById("slider10").onchange = function(event) {
-         theta[head2Id] = event.target.value;
-         initNodes(head2Id);
+         theta[leftFrontWheelId2] = event.target.value;
+         
+         initNodes(leftFrontWheelId2);
+      
     };
 
     document.addEventListener("keydown",(e) => {
@@ -475,11 +537,15 @@ window.onload = function init() {
                 theta[head3Id] -= 1;
                 theta[leftUpperArmId2] -= 2;
                 theta[rightUpperArmId2] -= 2;
-                
+                theta[leftFrontWheelId2] -= 2;
+                theta[rightFrontWheelId2] -= 2;
+           
                 initNodes(head3Id);
                 initNodes(rightUpperArmId2);
                 initNodes(leftUpperArmId2);
-                
+                initNodes(leftFrontWheelId2);
+                initNodes(rightFrontWheelId2);
+
             }
         }
 
@@ -488,10 +554,15 @@ window.onload = function init() {
                 theta[head3Id] += 1;
                 theta[leftUpperArmId2] += 2;
                 theta[rightUpperArmId2] += 2;
+                theta[leftFrontWheelId2] += 2;
+                theta[rightFrontWheelId2] += 2;
                 
                 initNodes(head3Id);
                 initNodes(leftUpperArmId2);
                 initNodes(rightUpperArmId2);
+                initNodes(leftFrontWheelId2);
+                initNodes(rightFrontWheelId2);
+
             } 
         }
     });
@@ -501,10 +572,16 @@ window.onload = function init() {
             theta[head3Id] = 0;
             theta[leftUpperArmId2] = 0;
             theta[rightUpperArmId2] = 0;
+            theta[leftUpperArmId2] = 0;
+            theta[leftFrontWheelId2] = 0;
+            theta[rightFrontWheelId2] = 0;
 
             initNodes(head3Id);
             initNodes(leftUpperArmId2);
             initNodes(rightUpperArmId2);
+            initNodes(leftFrontWheelId2);
+            initNodes(rightFrontWheelId2);
+            
         }
        
     });
