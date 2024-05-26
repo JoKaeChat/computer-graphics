@@ -106,7 +106,7 @@ let aspect ;
 let near = 0.1;
 let far = 1000.0;
 
-let lightPosition = vec4(-10.0, 10.0, 10.0, 0.0 ); 
+let lightPosition = vec4(0.0, 10.0,10.0, 0.0 ); 
 let lightAmbient = vec4(0.2, 0.2, 0.2, 0.2 ); 
 let lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 let lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 ); 
@@ -361,7 +361,7 @@ function leftBackWheel(){
     instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,0.0));
     instanceMatrix = mult(instanceMatrix, scale4(wheelWidth,wheelHeight,wheelHeight ) );
     gl.uniformMatrix4fv(modelViewMatrixLoc,false, flatten(instanceMatrix));
-    gl.uniform4f(colorLoc,255/256,212/256,0/256, 1.0); // yellow
+    gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); // yellow
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
@@ -377,7 +377,7 @@ function rightBackWheel(){
     instanceMatrix = mult(modelViewMatrix , translate(0.0,0.0,0.0));
     instanceMatrix = mult(instanceMatrix, scale4(wheelWidth,wheelHeight,wheelHeight ) );
     gl.uniformMatrix4fv(modelViewMatrixLoc,false, flatten(instanceMatrix));
-    gl.uniform4f(colorLoc,255/256,212/256,0/256, 1.0); // yellow 
+    gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); // yellow 
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 

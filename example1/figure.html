@@ -48,8 +48,8 @@ varying vec4 fColor;
 void main()
 {
     vec4 vColor = normalize(fColor);
-    gl_FragColor = vColor*uColor;
-    gl_FragColor.a = 1.0;
+    gl_FragColor = uColor;
+    gl_FragColor *= vColor;
 
 }
 </script>
