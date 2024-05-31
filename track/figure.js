@@ -515,11 +515,11 @@ function plane(){
 
 function track(){
     // ---------- 여기에 트랙의 점 정보랑 법선벡터를 추가하는 코드를 작성해주세요 ---------//
-    
+
     // 예시 ) 
-    //pointsArray.push(planeVertices[0]);
+    //pointsArray.push(trackVertices[0]);
     //normalsArray.push([0,1,0]);
-    //pointsArray.push(planeVertices[1]);
+    //pointsArray.push(trackVertices[1]);
     //normalsArray.push([0,1,0]); 
     //  ....
 
