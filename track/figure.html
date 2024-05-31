@@ -55,30 +55,7 @@ void main()
 }
 </script>
 
-<script id="t-vertex-shader" type="x-shader/x-vertex">
 
-attribute  vec4 tPosition;
-
-
-void main()
-{   
-    gl_Position = tPosition;
-}
-</script>
-
-
-<script id="t-fragment-shader" type="x-shader/x-fragment">
-
-precision mediump float;
-uniform vec4 uColor;
-varying vec4 fColor;
-
-void main()
-{
-    gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
-
-}
-</script>
 
 
 <script type="text/javascript" src="../Common/webgl-utils.js"></script>
@@ -86,40 +63,7 @@ void main()
 <script type="text/javascript" src="../Common/MV.js"></script>
 <script type="text/javascript" src="figure.js"></script>
 
-<div class>
-torso angle -180 <input id="slider0" type="range"
- min="-180" max="180" step="10" value="0"
-  />
- 180
-</div><br/>
-<div>
-바퀴 angle -180 <input id="slider10" type="range"
- min="-180" max="180" step="10" value="0"
-  />
- 180
-</div><br/>
 
-<div>
-head1 angle -180 <input id="slider1" type="range"
- min="-180" max="180" step="10" value="0"
-  />
- 180
-</div><br/>
-
-<div>
-left upper arm angle -180 <input id="slider2" type="range"
- min="-180" max="180" step="10" value="0"
-  />
- 180
-</div><br/>
-<br/>
-<div>
-right upper arm angle -180 <input id="slider4" type="range"
- min="-180" max="180" step="10" value="0"
-  />
- 180
-</div><br/>
-<br/>
 <div>
 X 좌표 -100 <input id="xSlider" type="range"
  min="-100" max="100" step="1" value="0"
@@ -128,7 +72,7 @@ X 좌표 -100 <input id="xSlider" type="range"
 </div>
 <div>
 Y 좌표 -100 <input id="ySlider" type="range"
- min="-100" max="100" step="1" value="0"
+ min="0" max="100" step="1" value="0"
   />
  100
 </div>

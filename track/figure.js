@@ -3,7 +3,6 @@
 let canvas;
 let gl;
 let program;
-let trackprogram;
 
 let projectionMatrix;
 let modelViewMatrix;
@@ -12,9 +11,7 @@ let instanceMatrix;
 
 let modelViewMatrixLoc;
 
-let trackBuffer;
 let vPosition;
-let tPosition;
 
 let vertices = [
 
@@ -43,10 +40,10 @@ let vertices2 = [
 ];
 
 let planeVertices = [
-    vec4(-1000.0, -2.0,  -1000.0, 1.0),
-    vec4(-1000.0, -2.0,  1000.0 , 1.0),
-    vec4(1000.0 , -2.0,  1000.0 , 1.0),
-    vec4(1000.0, -2.0,  -1000.0, 1.0),
+    vec4(-1000.0, -3.0,  -1000.0, 1.0),
+    vec4(-1000.0, -3.0,  1000.0 , 1.0),
+    vec4(1000.0 , -3.0,  1000.0 , 1.0),
+    vec4(1000.0, -3.0,  -1000.0, 1.0),
 ];
 
 var trackVertices = [
@@ -193,6 +190,7 @@ function createNode(transform, render, sibling, child){
 }
 
 
+// 캐릭터 모델링 초기 설정 
 function initNodes(Id) {
 
     let m = mat4();
@@ -313,6 +311,7 @@ function initNodes(Id) {
    }
 }
 
+// 트리 탐색
 function traverse(Id) {
 
    if(Id == null) return;
@@ -324,6 +323,7 @@ function traverse(Id) {
    if(figure[Id].sibling != null) traverse(figure[Id].sibling);
 }
 
+// 캐릭터 모델링 초기 설정 
 function torso() {
 
     instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.5*torsoHeight, 0.0) );
@@ -333,6 +333,7 @@ function torso() {
     for(let i =6; i<12; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
+// 캐릭터 모델링 초기 설정 
 function head() {
     instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.5 * headHeight, 0.0 ));
 	instanceMatrix = mult(instanceMatrix, scale4(headWidth, headHeight, headWidth) );
@@ -443,8 +444,6 @@ function quad(a, b, c, d) {
     normalsArray.push(normal);
     normalsArray.push(normal);
     normalsArray.push(normal);
-
-
 }
 
 
@@ -508,36 +507,6 @@ function plane(){
 }
 
 
-//__________________________ tarck __________________________//
-
-function moveTrack(dz) {
-    for (var i = 0; i < trackVertices.length; i++) {
-        trackVertices[i][2] += dz;
-        
-        if (trackVertices[i][2] > 1.0) {
-            trackVertices[i][2] -= 2.0;
-        }
-    }
-
-    //gl.useProgram(trackprogram);
-    gl.deleteBuffer(trackBuffer);
-    trackBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, trackBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(trackVertices), gl.STATIC_DRAW);
-}
-
-function drawTrack() {
-    gl.bindBuffer(gl.ARRAY_BUFFER, trackBuffer);
-    gl.vertexAttribPointer(tPosition, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(tPosition);
-
-    //gl.uniform4f(colorLoc, 153/256, 56/256, 0.0, 1.0);
-
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, trackVertices.length);
-}
-
-//_____________________________________________________________//
-
 
 window.onload = function init() {
 
@@ -549,19 +518,8 @@ window.onload = function init() {
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
 
-    //
-    //  Load shaders and initialize attribute buffers
-    //
-
     program = initShaders( gl, "vertex-shader", "fragment-shader");
-    trackprogram = initShaders(gl, "t-vertex-shader", "t-fragment-shader"); //쉐이더를 추가해서 구현해보려 했는데... 잘 모르겠습니다..
-
-    /*gl.useProgram( trackprogram);
-
-    tPosition = gl.getAttribLocation( trackprogram, "tPosition" );
-    gl.vertexAttribPointer( tPosition, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( tPosition );*/
-
+  
     gl.useProgram( program);
 
     instanceMatrix = mat4();
@@ -607,42 +565,11 @@ window.onload = function init() {
     gl.vertexAttribPointer(vNormal,3,gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray(vNormal);
 
-
-    //---------------------------------------------------------------//
-
-        document.getElementById("slider0").onchange = function(event) {
-        theta[torsoId ] = event.target.value;
-        initNodes(torsoId);
-    };
-        document.getElementById("slider1").onchange = function(event) {
-        theta[head3Id] = event.target.value;
-        initNodes(head3Id);
-    };
-
-    document.getElementById("slider2").onchange = function(event) {
-         theta[leftUpperArmId] = event.target.value;
-         initNodes(leftUpperArmId);
-    };
-
-        document.getElementById("slider4").onchange = function(event) {
-        theta[rightUpperArmId] = event.target.value;
-        initNodes(rightUpperArmId);
-    };
- 
-    document.getElementById("slider10").onchange = function(event) {
-         theta[rightBackWheelId] = event.target.value;
-         
-         initNodes(rightBackWheelId);
-      
-    };
-
     document.getElementById("xSlider").onchange = function(event) {
         eye[0] = event.target.value;
 
         modelViewMatrix = lookAt(eye,at,up);
 
-        gl.uniformMatrix4fv(gl.getUniformLocation( program, "modelViewMatrix"), false, flatten(modelViewMatrix) );
-        modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
     };
 
     document.getElementById("ySlider").onchange = function(event) {
@@ -650,8 +577,6 @@ window.onload = function init() {
 
         modelViewMatrix = lookAt(eye,at,up);
 
-        gl.uniformMatrix4fv(gl.getUniformLocation( program, "modelViewMatrix"), false, flatten(modelViewMatrix) );
-        modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
     };
 
     document.getElementById("zSlider").onchange = function(event) {
@@ -659,8 +584,6 @@ window.onload = function init() {
 
         modelViewMatrix = lookAt(eye,at,up);
 
-        gl.uniformMatrix4fv(gl.getUniformLocation( program, "modelViewMatrix"), false, flatten(modelViewMatrix) );
-        modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
     };
 
     let upKeyPressed = false;
@@ -722,12 +645,12 @@ window.onload = function init() {
         if(!upKeyPressed && rightKeyPressed && !leftKeyPressed && !downKeyPressed){
             if (theta[head3Id] >= -HEAD_THROTLE) {
                 theta[head3Id] -= 1;
-                theta[leftUpperArmId2] += 2;
-                theta[rightUpperArmId2] += 2;
-                theta[leftFrontWheelId2] += 2;
-                theta[rightFrontWheelId2] += 2;
-                theta[leftBackWheelId2] += 2;
-                theta[rightBackWheelId2] += 2;
+                theta[leftUpperArmId2] -= 2;
+                theta[rightUpperArmId2] -= 2;
+                theta[leftFrontWheelId2] -= 2;
+                theta[rightFrontWheelId2] -= 2;
+                theta[leftBackWheelId2] -= 2;
+                theta[rightBackWheelId2] -= 2;
 
                 initNodes(head3Id);
                 initNodes(rightUpperArmId2);
@@ -744,12 +667,12 @@ window.onload = function init() {
          if(!upKeyPressed && !rightKeyPressed && leftKeyPressed && !downKeyPressed){
             if (theta[head3Id] <= HEAD_THROTLE) {
                 theta[head3Id] += 1;
-                theta[leftUpperArmId2] -= 2;
-                theta[rightUpperArmId2] -= 2;
-                theta[leftFrontWheelId2] -= 2;
-                theta[rightFrontWheelId2] -= 2;
-                theta[leftBackWheelId2] -= 2;
-                theta[rightBackWheelId2] -= 2;
+                theta[leftUpperArmId2] += 2;
+                theta[rightUpperArmId2] += 2;
+                theta[leftFrontWheelId2] += 2;
+                theta[rightFrontWheelId2] += 2;
+                theta[leftBackWheelId2] += 2;
+                theta[rightBackWheelId2] += 2;
                 initNodes(head3Id);
                 initNodes(leftUpperArmId2);
                 initNodes(rightUpperArmId2);
@@ -787,12 +710,12 @@ window.onload = function init() {
 
             if (theta[head3Id] >= -HEAD_THROTLE) {
                 theta[head3Id] -= 1;
-                theta[leftUpperArmId2] += 2;
-                theta[rightUpperArmId2] += 2;
-                theta[leftFrontWheelId2] += 2;
-                theta[rightFrontWheelId2] += 2;
-                theta[leftBackWheelId2] += 2;
-                theta[rightBackWheelId2] += 2;
+                theta[leftUpperArmId2] -= 2;
+                theta[rightUpperArmId2] -= 2;
+                theta[leftFrontWheelId2] -= 2;
+                theta[rightFrontWheelId2] -= 2;
+                theta[leftBackWheelId2] -= 2;
+                theta[rightBackWheelId2] -= 2;
 
                 initNodes(head3Id);
                 initNodes(rightUpperArmId2);
@@ -819,12 +742,12 @@ window.onload = function init() {
 
             if (theta[head3Id] <= HEAD_THROTLE) {
                 theta[head3Id] += 1;
-                theta[leftUpperArmId2] -= 2;
-                theta[rightUpperArmId2] -= 2;
-                theta[leftFrontWheelId2] -= 2;
-                theta[rightFrontWheelId2] -= 2;
-                theta[leftBackWheelId2] -= 2;
-                theta[rightBackWheelId2] -= 2;
+                theta[leftUpperArmId2] += 2;
+                theta[rightUpperArmId2] += 2;
+                theta[leftFrontWheelId2] += 2;
+                theta[rightFrontWheelId2] += 2;
+                theta[leftBackWheelId2] += 2;
+                theta[rightBackWheelId2] += 2;
                 initNodes(head3Id);
                 initNodes(leftUpperArmId2);
                 initNodes(rightUpperArmId2);
@@ -843,7 +766,11 @@ window.onload = function init() {
             theta[leftFrontWheelId] += 10;
             theta[leftBackWheelId] += 10;
             theta[rightBackWheelId] += 10;
+            if(theta[head2Id] <= 110){
+                theta[head2Id] +=7; 
+            }
 
+            initNodes(head2Id);
             initNodes(leftFrontWheelId);
             initNodes(rightFrontWheelId);
             initNodes(leftBackWheelId);
@@ -858,6 +785,11 @@ window.onload = function init() {
             theta[leftFrontWheelId] += 10;
             theta[leftBackWheelId] += 10;
             theta[rightBackWheelId] += 10;
+            if(theta[head2Id] <= 110){
+                theta[head2Id] +=7; 
+            }
+
+            initNodes(head2Id);
             
             initNodes(leftFrontWheelId);
             initNodes(rightFrontWheelId);
@@ -868,11 +800,11 @@ window.onload = function init() {
 
             if (theta[head3Id] >= -HEAD_THROTLE) {
                 theta[head3Id] -= 1;
-                theta[leftUpperArmId2] += 2;
-                theta[rightUpperArmId2] += 2;
-                theta[leftFrontWheelId2] += 2;
-                theta[rightFrontWheelId2] += 2;
-                theta[rightBackWheelId2] += 2;
+                theta[leftUpperArmId2] -= 2;
+                theta[rightUpperArmId2] -= 2;
+                theta[leftFrontWheelId2] -= 2;
+                theta[rightFrontWheelId2] -= 2;
+                theta[rightBackWheelId2] -= 2;
             
                 initNodes(head3Id);
                 initNodes(rightUpperArmId2);
@@ -889,6 +821,11 @@ window.onload = function init() {
             theta[leftFrontWheelId] += 10;
             theta[leftBackWheelId] += 10;
             theta[rightBackWheelId] += 10;
+            if(theta[head2Id] >= -110){
+                theta[head2Id] -=7; 
+            }
+
+            initNodes(head2Id);
 
             initNodes(leftFrontWheelId);
             initNodes(rightFrontWheelId);
@@ -899,11 +836,11 @@ window.onload = function init() {
 
             if (theta[head3Id] <= HEAD_THROTLE) {
                 theta[head3Id] += 1;
-                theta[leftUpperArmId2] -= 2;
-                theta[rightUpperArmId2] -= 2;
-                theta[leftFrontWheelId2] -= 2;
-                theta[rightFrontWheelId2] -= 2;
-                theta[rightBackWheelId2] -= 2;
+                theta[leftUpperArmId2] += 2;
+                theta[rightUpperArmId2] += 2;
+                theta[leftFrontWheelId2] += 2;
+                theta[rightFrontWheelId2] += 2;
+                theta[rightBackWheelId2] += 2;
                 initNodes(head3Id);
                 initNodes(leftUpperArmId2);
                 initNodes(rightUpperArmId2);
@@ -913,9 +850,6 @@ window.onload = function init() {
                 moveX -= 0.01;
             }
         }
-
-
-        
     });
     
     document.addEventListener("keyup", (e) => {
@@ -933,6 +867,9 @@ window.onload = function init() {
 
         if(e.key == 'ArrowDown'){
             downKeyPressed = false;
+            theta[head2Id] = 0;
+
+            initNodes(head2Id);
         }
 
 
@@ -978,10 +915,15 @@ let render = function() {
         modelViewMatrix = mult(modelViewMatrix, translateMatrix); 
         gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix));
 
+        gl.uniform4f(colorLoc,255/256 ,243/256 ,79/256, 0.2);
+        gl.drawArrays(gl.TRIANGLES,48,6);
+    
+        // ------------- 여기에 자동차가 주행할 노선을 그려주세요 ------//
+
+        // ------------- 여기에 자동차가 주행할 노선을 그려주세요 ------//
+
         traverse(torsoId);
 
-        //drawTrack();
-        //moveTrack(0.001);
-        
+   
         requestAnimFrame(render);
 }
