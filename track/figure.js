@@ -333,7 +333,7 @@ function torso() {
     for(let i =6; i<12; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
-// 캐릭터 모델링 초기 설정 
+//-- 캐릭터 모델링 초기 설정 --------------------------------//
 function head() {
     instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.5 * headHeight, 0.0 ));
 	instanceMatrix = mult(instanceMatrix, scale4(headWidth, headHeight, headWidth) );
@@ -427,7 +427,11 @@ function rightBackWheel(){
     gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); 
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
+//-- 캐릭터 모델링 초기 설정 --------------------------------//
 
+
+
+//-------------- 법선 벡터랑 vertices 추가 --------------------//
 function quad(a, b, c, d) {
     let t1 = subtract(vertices[b], vertices[a]);
     let t2 = subtract(vertices[c], vertices[b]);
@@ -506,8 +510,18 @@ function plane(){
     normalsArray.push(normal);
 }
 
+// ---------- 여기에 트랙의 점 정보랑 법선벡터를 추가하는 코드를 작성해주세요 ---------//
+
+// ---------- 여기에 트랙의 점 정보랑 법선벡터를 추가하는 코드를 작성해주세요 ---------//
 
 
+
+
+//-------------- 법선 벡터랑 vertices 추가 --------------------//
+
+
+
+// ------------------- 렌더링 ------------------//
 window.onload = function init() {
 
     canvas = document.getElementById( "gl-canvas" );
@@ -546,6 +560,9 @@ window.onload = function init() {
     cube();
     trapezoid();
     plane();
+    // ------------  트랙 좌표 추가하는 함수 호출 -------//
+
+    // ------------  트랙 좌표 추가하는 함수 호출 -------//
 
     vBuffer = gl.createBuffer();
     gl.enable(gl.DEPTH_TEST);
@@ -915,7 +932,10 @@ let render = function() {
         modelViewMatrix = mult(modelViewMatrix, translateMatrix); 
         gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix));
 
+
+        // color setting
         gl.uniform4f(colorLoc,255/256 ,243/256 ,79/256, 0.2);
+        // draw
         gl.drawArrays(gl.TRIANGLES,48,6);
     
         // ------------- 여기에 자동차가 주행할 노선을 그려주세요 ------//
