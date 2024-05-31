@@ -46,6 +46,8 @@ let planeVertices = [
     vec4(1000.0, -3.0,  -1000.0, 1.0),
 ];
 
+
+//----- 점 위치 수정해주세요------- //
 var trackVertices = [
     vec4(-0.3, 0, -1, 1.0),
     vec4(0.5, 0, -1, 1.0),
@@ -511,8 +513,15 @@ function plane(){
 }
 
 
-function trackVertices(){
+function track(){
     // ---------- 여기에 트랙의 점 정보랑 법선벡터를 추가하는 코드를 작성해주세요 ---------//
+    
+    // 예시 ) 
+    //pointsArray.push(planeVertices[0]);
+    //normalsArray.push([0,1,0]);
+    //pointsArray.push(planeVertices[1]);
+    //normalsArray.push([0,1,0]); 
+    //  ....
 
     // ---------- 여기에 트랙의 점 정보랑 법선벡터를 추가하는 코드를 작성해주세요 ---------//
 }
@@ -565,7 +574,7 @@ window.onload = function init() {
     cube();
     trapezoid();
     plane();
-    trackVertices();
+    track();
 
     vBuffer = gl.createBuffer();
     gl.enable(gl.DEPTH_TEST);
