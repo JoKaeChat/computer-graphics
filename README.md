@@ -13,7 +13,9 @@
   - 또한 **각 점마다 법선 벡터를 추가** 해야합니다. 점 하나 추가할 때마다 normalsArray.push([0,1,0])을 해주세요
   - 현재 gl의 ArrayBuffer에는 인덱스 0부터 53부터 점들이 이미 추가되어 있는 상태입니다. 
   - 따라 gl.drawArray를 호출해서 트랙을 그릴 때 **시작인덱스는 54** 여야 합니다.
-      예시 :  gl.drawArrays(gl.TRIANGLE,54,추가한 점의 개수)
+    `
+      ex )  gl.drawArrays(gl.TRIANGLE,54,추가한 점의 개수)
+    `
   - 모르시겠다면 quad 함수를 참고해주세요
 
 
