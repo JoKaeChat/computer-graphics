@@ -40,41 +40,41 @@ let vertices2 = [
 ];
 
 let planeVertices = [
-    vec4(-1000.0, -3.0,  -1000.0, 1.0),
-    vec4(-1000.0, -3.0,  1000.0 , 1.0),
-    vec4(1000.0 , -3.0,  1000.0 , 1.0),
-    vec4(1000.0, -3.0,  -1000.0, 1.0),
+    vec4(-1000.0, -3.02,  -1000.0, 1.0),
+    vec4(-1000.0, -3.02,  1000.0 , 1.0),
+    vec4(1000.0 , -3.02,  1000.0 , 1.0),
+    vec4(1000.0, -3.02,  -1000.0, 1.0),
 ];
 
 
 //----- 점 위치 수정해주세요------- //
 var trackVertices = [
-    vec4(-0.3, 0, -1, 1.0),
-    vec4(0.5, 0, -1, 1.0),
-    vec4(-0.3, 0, -0.7, 1.0),
-    vec4(0.5, 0, -0.7, 1.0),
-    vec4(-0.6, 0, -0.55, 1.0),
-    vec4(0.2, 0, -0.55, 1.0),
-    vec4(-0.6, 0, -0.35, 1.0),
-    vec4(0.2, 0, -0.35, 1.0),
-    vec4(-0.9, 0, -0.2, 1.0),
-    vec4(-0.1, 0, -0.2, 1.0),
-    vec4(-0.9, 0, -0.1, 1.0),
-    vec4(-0.1, 0, -0.1, 1.0),
-    vec4(-0.6, 0, 0.05, 1.0),
-    vec4(0.2, 0, 0.05, 1.0),
-    vec4(-0.6, 0, 0.15, 1.0),
-    vec4(0.2, 0, 0.15, 1.0),
-    vec4(-0.9, 0, 0.3, 1.0),
-    vec4(-0.1, 0, 0.3, 1.0),
-    vec4(-0.6, 0, 0.45, 1.0),
-    vec4(0.2, 0, 0.45, 1.0),
-    vec4(-0.6, 0, 0.6, 1.0),
-    vec4(0.2, 0, 0.6, 1.0),
-    vec4(-0.3, 0, 0.75, 1.0),
-    vec4(0.5, 0, 0.75, 1.0),
-    vec4(-0.3, 0, 1, 1.0),
-    vec4(0.5, 0, 1, 1.0),
+    vec4(-3, -3.0, -100, 1.0),
+    vec4(10, -3.0, -100, 1.0),
+    vec4(-3, -3.0, -70, 1.0),
+    vec4(10, -3.0, -70, 1.0),
+    vec4(-6, -3.0, -55, 1.0),
+    vec4(7, -3.0, -55, 1.0),
+    vec4(-6, -3.0, -35, 1.0),
+    vec4(7, -3.0, -35, 1.0),
+    vec4(-9, -3.0, -20, 1.0),
+    vec4(4, -3.0, -20, 1.0),
+    vec4(-9, -3.0, -10, 1.0),
+    vec4(4, -3.0, -10, 1.0),
+    vec4(-6, -3.0, 5, 1.0),
+    vec4(7, -3.0, 5, 1.0),
+    vec4(-6, -3.0, 15, 1.0),
+    vec4(7, -3.0, 15, 1.0),
+    vec4(-9, -3.0, 30, 1.0),
+    vec4(4, -3.0, 30, 1.0),
+    vec4(-6, -3.0, 45, 1.0),
+    vec4(7, -3.0, 45, 1.0),
+    vec4(-6, -3.0, 60, 1.0),
+    vec4(7, -3.0, 60, 1.0),
+    vec4(-3, -3.0, 75, 1.0),
+    vec4(10, -3.0, 75, 1.0),
+    vec4(-3, -3.0, 100, 1.0),
+    vec4(10, -3.0, 100, 1.0),
 ];
 
 
@@ -512,22 +512,31 @@ function plane(){
     normalsArray.push(normal);
 }
 
+function quad3(a, b, c, d) {
+    let t1 = subtract(trackVertices[b], trackVertices[a]);
+    let t2 = subtract(trackVertices[c], trackVertices[b]);
+    let normal = cross(t1, t2);
 
-function track(){
-    // ---------- 여기에 트랙의 점 정보랑 법선벡터를 추가하는 코드를 작성해주세요 ---------//
+    pointsArray.push(trackVertices[a]);
+    pointsArray.push(trackVertices[b]);
+    pointsArray.push(trackVertices[c]);
+    pointsArray.push(trackVertices[b]);
+    pointsArray.push(trackVertices[c]);
+    pointsArray.push(trackVertices[d]);
 
-    // 예시 ) 
-    //pointsArray.push(trackVertices[0]);
-    //normalsArray.push([0,1,0]);
-    //pointsArray.push(trackVertices[1]);
-    //normalsArray.push([0,1,0]); 
-    //  ....
-
-    // ---------- 여기에 트랙의 점 정보랑 법선벡터를 추가하는 코드를 작성해주세요 ---------//
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
 }
 
-
-
+function track(){
+    for(var i=0; i<trackVertices.length-2; i+=2){
+        quad3(i, i+1, i+2, i+3);
+    }
+}
 
 
 
@@ -642,7 +651,6 @@ window.onload = function init() {
         }
 
         if (e.code === 'Space') {
-            console.log('space key down');
 
                 if (theta[head3Id] >= -HEAD_THROTLE && space == true) {
                     theta[head3Id] -= 1;
@@ -950,11 +958,8 @@ let render = function() {
         // draw
         gl.drawArrays(gl.TRIANGLES,48,6);
     
-
-        // ------------- 여기에 자동차가 주행할 노선을 그려주세요 ------//
-        //  gl.uniform4f(colorLoc,255/256 ,243/256 ,79/256, 0.2); // 트랙 색상 수정 필요!!!
-         // gl.drawArrays(gl.TRIANGLE,54, 추가한 점의 개수) // 수정 필요!!!
-        // ------------- 여기에 자동차가 주행할 노선을 그려주세요 ------//
+        gl.uniform4f(colorLoc, 153/256, 56/256, 0.0, 1); !
+        gl.drawArrays(gl.TRIANGLES, 54, 6*12); 
 
         traverse(torsoId);
 
