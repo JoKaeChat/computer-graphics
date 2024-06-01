@@ -125,7 +125,10 @@ let handHeight = 1.0;
 let numNodes = 19;
 let angle = 0;
 
-let theta = [-180, 0, 0, 0, 70, 70,
+let torsoRotate = -180;
+let forwardDirection = { x : 0, z: -180 };
+
+let theta = [torsoRotate, 0, 0, 0, 70, 70,
                 0, 0,0,0,0, 
                 0,0,0,0,0,
                 0,0,0,0,0,
@@ -631,6 +634,7 @@ window.onload = function init() {
 
         if(e.key == 'ArrowRight'){
             rightKeyPressed = true;
+            
         }
 
         if(e.key == 'ArrowLeft'){
@@ -670,6 +674,8 @@ window.onload = function init() {
 
         }
 
+        // let torsoRotate = -180;
+        // let forwardDirection = { x: 0, y: 0 };
         //오른쪽 키만
         if(!upKeyPressed && rightKeyPressed && !leftKeyPressed && !downKeyPressed){
             if (theta[head3Id] >= -HEAD_THROTLE) {
@@ -681,6 +687,10 @@ window.onload = function init() {
                 theta[leftBackWheelId2] -= 2;
                 theta[rightBackWheelId2] -= 2;
 
+                torsoRotate -= 10;
+                theta[torsoId] = torsoRotate;
+                initNodes(torsoId);
+                
                 initNodes(head3Id);
                 initNodes(rightUpperArmId2);
                 initNodes(leftUpperArmId2);
@@ -688,7 +698,6 @@ window.onload = function init() {
                 initNodes(rightFrontWheelId2);  
                 initNodes(leftBackWheelId2);
                 initNodes(rightBackWheelId2);      
-                
             }
         }
 
@@ -702,6 +711,11 @@ window.onload = function init() {
                 theta[rightFrontWheelId2] += 2;
                 theta[leftBackWheelId2] += 2;
                 theta[rightBackWheelId2] += 2;
+
+                torsoRotate += 10;
+                theta[torsoId] = torsoRotate;
+                initNodes(torsoId);
+
                 initNodes(head3Id);
                 initNodes(leftUpperArmId2);
                 initNodes(rightUpperArmId2);
@@ -722,7 +736,9 @@ window.onload = function init() {
             initNodes(rightFrontWheelId);
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
-            moveZ += 0.01;
+
+            moveX -= Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
+            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
 
         // 앞키 + 오른쪽 키
@@ -735,8 +751,7 @@ window.onload = function init() {
             initNodes(rightFrontWheelId);
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
-            moveZ += 0.01;
-
+           
             if (theta[head3Id] >= -HEAD_THROTLE) {
                 theta[head3Id] -= 1;
                 theta[leftUpperArmId2] -= 2;
@@ -752,9 +767,13 @@ window.onload = function init() {
                 initNodes(leftFrontWheelId2);
                 initNodes(rightFrontWheelId2);  
                 initNodes(leftBackWheelId2);
-                initNodes(rightBackWheelId2);      
-                moveX += 0.01;
+                initNodes(rightBackWheelId2); 
             }
+            torsoRotate -= 3;
+            theta[torsoId] = torsoRotate;
+            initNodes(torsoId);
+            moveX -= Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
+            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
 
         // 앞키 + 왼쪽키
@@ -767,7 +786,7 @@ window.onload = function init() {
             initNodes(rightFrontWheelId);
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
-            moveZ += 0.01;
+      
 
             if (theta[head3Id] <= HEAD_THROTLE) {
                 theta[head3Id] += 1;
@@ -784,8 +803,13 @@ window.onload = function init() {
                 initNodes(rightFrontWheelId2);
                 initNodes(leftBackWheelId2);
                 initNodes(rightBackWheelId2);  
-                moveX -= 0.01;
             }
+
+            torsoRotate += 3;
+            theta[torsoId] = torsoRotate;
+            initNodes(torsoId);
+            moveX -= Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
+            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
 
 
@@ -804,7 +828,8 @@ window.onload = function init() {
             initNodes(rightFrontWheelId);
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
-            moveZ -= 0.01;
+            moveX += Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
+            moveZ += Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
          
         }
 
@@ -817,15 +842,11 @@ window.onload = function init() {
             if(theta[head2Id] <= 110){
                 theta[head2Id] +=7; 
             }
-
             initNodes(head2Id);
-            
             initNodes(leftFrontWheelId);
             initNodes(rightFrontWheelId);
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
-
-            moveZ -= 0.01;
 
             if (theta[head3Id] >= -HEAD_THROTLE) {
                 theta[head3Id] -= 1;
@@ -841,8 +862,12 @@ window.onload = function init() {
                 initNodes(leftFrontWheelId2);
                 initNodes(rightFrontWheelId2);     
                 initNodes(rightBackWheelId2);
-                moveX += 0.01;
             }
+            torsoRotate += 3;
+            theta[torsoId] = torsoRotate;
+            initNodes(torsoId);
+            moveX += Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
+            moveZ += Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
 
         if(downKeyPressed && leftKeyPressed){
@@ -855,13 +880,10 @@ window.onload = function init() {
             }
 
             initNodes(head2Id);
-
             initNodes(leftFrontWheelId);
             initNodes(rightFrontWheelId);
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
-
-            moveZ -= 0.01;
 
             if (theta[head3Id] <= HEAD_THROTLE) {
                 theta[head3Id] += 1;
@@ -876,8 +898,13 @@ window.onload = function init() {
                 initNodes(leftFrontWheelId2);
                 initNodes(rightFrontWheelId2);
                 initNodes(rightBackWheelId2);
-                moveX -= 0.01;
+
             }
+            torsoRotate -= 3;
+            theta[torsoId] = torsoRotate;
+            initNodes(torsoId);
+            moveX += Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
+            moveZ += Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
     });
     
@@ -897,7 +924,6 @@ window.onload = function init() {
         if(e.key == 'ArrowDown'){
             downKeyPressed = false;
             theta[head2Id] = 0;
-
             initNodes(head2Id);
         }
 
@@ -911,6 +937,9 @@ window.onload = function init() {
             theta[rightFrontWheelId2] = 0;
             theta[leftBackWheelId2] = 0;
             theta[rightBackWheelId2] = 0;
+
+            theta[torsoRotate] =torsoRotate;
+            initNodes(torsoRotate);
 
             initNodes(head3Id);
             initNodes(leftUpperArmId2);
@@ -926,6 +955,7 @@ window.onload = function init() {
 
         if(e.key == 'ArrowUp' || e.key == 'ArrowDown'){
             moveZ = 0;
+            moveX = 0;
         }
     });
     
