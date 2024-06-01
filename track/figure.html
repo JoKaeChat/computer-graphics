@@ -17,6 +17,7 @@ uniform float shininess;
 
 void main()
 {   
+  
     vec3 pos = (modelViewMatrix * vPosition).xyz;
     vec3 light = lightPosition.xyz;
     vec3 L = normalize( light - pos );
@@ -78,11 +79,14 @@ Y 좌표 -100 <input id="ySlider" type="range"
 </div>
 <div>
 Z 좌표 -100 <input id="zSlider" type="range"
- min="-100" max="100" step="1" value="0"
+ min="0" max="100" step="1" value="0"
   />
  100
 </div>
-
+<div>
+    <button>1인칭</button>
+    <button>3인칭(고정 카메라)</button>
+</div>
 
 
 

@@ -8,7 +8,6 @@ let projectionMatrix;
 let modelViewMatrix;
 
 let instanceMatrix;
-
 let modelViewMatrixLoc;
 
 let vPosition;
@@ -40,41 +39,10 @@ let vertices2 = [
 ];
 
 let planeVertices = [
-    vec4(-1000.0, -3.02,  -1000.0, 1.0),
-    vec4(-1000.0, -3.02,  1000.0 , 1.0),
-    vec4(1000.0 , -3.02,  1000.0 , 1.0),
-    vec4(1000.0, -3.02,  -1000.0, 1.0),
-];
-
-
-//----- 점 위치 수정해주세요------- //
-var trackVertices = [
-    vec4(-3, -3.0, -100, 1.0),
-    vec4(10, -3.0, -100, 1.0),
-    vec4(-3, -3.0, -70, 1.0),
-    vec4(10, -3.0, -70, 1.0),
-    vec4(-6, -3.0, -55, 1.0),
-    vec4(7, -3.0, -55, 1.0),
-    vec4(-6, -3.0, -35, 1.0),
-    vec4(7, -3.0, -35, 1.0),
-    vec4(-9, -3.0, -20, 1.0),
-    vec4(4, -3.0, -20, 1.0),
-    vec4(-9, -3.0, -10, 1.0),
-    vec4(4, -3.0, -10, 1.0),
-    vec4(-6, -3.0, 5, 1.0),
-    vec4(7, -3.0, 5, 1.0),
-    vec4(-6, -3.0, 15, 1.0),
-    vec4(7, -3.0, 15, 1.0),
-    vec4(-9, -3.0, 30, 1.0),
-    vec4(4, -3.0, 30, 1.0),
-    vec4(-6, -3.0, 45, 1.0),
-    vec4(7, -3.0, 45, 1.0),
-    vec4(-6, -3.0, 60, 1.0),
-    vec4(7, -3.0, 60, 1.0),
-    vec4(-3, -3.0, 75, 1.0),
-    vec4(10, -3.0, 75, 1.0),
-    vec4(-3, -3.0, 100, 1.0),
-    vec4(10, -3.0, 100, 1.0),
+    vec4(-1000.0, -3.0,  -1000.0, 1.0),
+    vec4(-1000.0, -3.0,  1000.0 , 1.0),
+    vec4(1000.0 , -3.0,  1000.0 , 1.0),
+    vec4(1000.0, -3.0,  -1000.0, 1.0),
 ];
 
 
@@ -105,7 +73,6 @@ let rightBackWheelId2 = 17;
 let leftHandId = 11;
 let rightHandId = 12;
 
-
 let torsoHeight = 6.0;
 let torsoWidth = 2.0;
 let upperArmHeight = 3.0;
@@ -122,11 +89,10 @@ let earHeight = 2.0;
 let handWidth = 2.0;
 let handHeight = 1.0;
 
-let numNodes = 19;
+let numNodes = 22;
 let angle = 0;
 
 let torsoRotate = -180;
-let forwardDirection = { x : 0, z: -180 };
 
 let theta = [torsoRotate, 0, 0, 0, 70, 70,
                 0, 0,0,0,0, 
@@ -145,6 +111,7 @@ let normalsArray = [];
 let eye=[0,2.0,40];
 let up = [0,1,0];
 let at = [0,0,0];
+
 let fovy = 45;
 let aspect ;
 let near = 0.1;
@@ -203,9 +170,10 @@ function initNodes(Id) {
     switch(Id) {
 
     case torsoId:
-
-
-    m = rotate(theta[torsoId], 0, 1, 0 );
+    
+    m = translate(moveX, 0.0, moveZ);
+    
+    m = mult(m,rotate(theta[torsoId], 0, 1, 0 ));
 
     figure[torsoId] = createNode( m, torso, null, headId );
     break;
@@ -330,8 +298,7 @@ function traverse(Id) {
 
 // 캐릭터 모델링 초기 설정 
 function torso() {
-
-    instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.5*torsoHeight, 0.0) );
+    instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.5*torsoHeight , 0.0) );
     instanceMatrix = mult(instanceMatrix, scale4( torsoWidth, torsoHeight, torsoWidth));
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
     gl.uniform4f(colorLoc,1/256,119/256,204/256, 1.0); // blue
@@ -432,8 +399,6 @@ function rightBackWheel(){
     gl.uniform4f(colorLoc,0/256,0/256,0/256, 1.0); 
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
-//-- 캐릭터 모델링 초기 설정 --------------------------------//
-
 
 
 //-------------- 법선 벡터랑 vertices 추가 --------------------//
@@ -506,27 +471,6 @@ function plane(){
     pointsArray.push(planeVertices[2]);
     pointsArray.push(planeVertices[3]);
 
-    console.log(pointsArray);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-}
-
-function quad3(a, b, c, d) {
-    let t1 = subtract(trackVertices[b], trackVertices[a]);
-    let t2 = subtract(trackVertices[c], trackVertices[b]);
-    let normal = cross(t1, t2);
-
-    pointsArray.push(trackVertices[a]);
-    pointsArray.push(trackVertices[b]);
-    pointsArray.push(trackVertices[c]);
-    pointsArray.push(trackVertices[b]);
-    pointsArray.push(trackVertices[c]);
-    pointsArray.push(trackVertices[d]);
-
     normalsArray.push(normal);
     normalsArray.push(normal);
     normalsArray.push(normal);
@@ -536,15 +480,76 @@ function quad3(a, b, c, d) {
 }
 
 function track(){
-    for(var i=0; i<trackVertices.length-2; i+=2){
-        quad3(i, i+1, i+2, i+3);
-    }
+    let t1 = subtract(planeVertices[0], planeVertices[1]);
+    let t2 = subtract(planeVertices[3], planeVertices[0]);
+    let normal = cross(t1, t2);
+
+
+    // 아래 직선
+    pointsArray.push(vec4(-50,-2.9,-50,1.0));
+    pointsArray.push(vec4(50,-2.9,-50,1.0));
+    pointsArray.push(vec4(50,-2.9,-100,1.0));
+    pointsArray.push(vec4(50,-2.9,-100,1.0));
+    pointsArray.push(vec4(-50,-2.9,-100,1.0));
+    pointsArray.push(vec4(-50,-2.9,-50,1.0));
+
+    // 오른쪽 직선
+    pointsArray.push(vec4(50,-2.9,-100,1.0));
+    pointsArray.push(vec4(50,-2.9,100,1.0));
+    pointsArray.push(vec4(100,-2.9,100,1.0));
+    pointsArray.push(vec4(100,-2.9,100,1.0));
+    pointsArray.push(vec4(100,-2.9,-100,1.0));
+    pointsArray.push(vec4(50,-2.9,-100,1.0));
+
+    // 위에 직선
+    pointsArray.push(vec4(100,-2.9,100,1.0));
+    pointsArray.push(vec4(100,-2.9,50,1.0));
+    pointsArray.push(vec4(-100,-2.9,50,1.0));
+    pointsArray.push(vec4(-100,-2.9,50,1.0));
+    pointsArray.push(vec4(-100,-2.9,100,1.0));
+    pointsArray.push(vec4(100,-2.9,100,1.0));
+
+    //왼쪽 직선
+    pointsArray.push(vec4(-100,-2.9,50,1.0));
+    pointsArray.push(vec4(-50,-2.9,50,1.0));
+    pointsArray.push(vec4(-50,-2.9,-100,1.0));
+    pointsArray.push(vec4(-50,-2.9,-100,1.0));
+    pointsArray.push(vec4(-100,-2.9,-100,1.0));
+    pointsArray.push(vec4(-100,-2.9,50,1.0));
+
+
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+
 }
-
-
-
-//-------------- 법선 벡터랑 vertices 추가 --------------------//
-
 
 
 // ------------------- 렌더링 ------------------//
@@ -582,7 +587,7 @@ window.onload = function init() {
     gl.uniform4fv(gl.getUniformLocation(program,"specularProduct"), flatten(specularProduct));
     gl.uniform4fv(gl.getUniformLocation(program,"lightPosition"), flatten(lightPosition));
     gl.uniform1f(gl.getUniformLocation(program, "shininess"),materialShininess);
-
+   
     cube();
     trapezoid();
     plane();
@@ -606,6 +611,7 @@ window.onload = function init() {
     gl.vertexAttribPointer(vNormal,3,gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray(vNormal);
 
+
     document.getElementById("xSlider").onchange = function(event) {
         eye[0] = event.target.value;
 
@@ -622,7 +628,6 @@ window.onload = function init() {
 
     document.getElementById("zSlider").onchange = function(event) {
         eye[2] = event.target.value;
-
         modelViewMatrix = lookAt(eye,at,up);
 
     };
@@ -682,8 +687,6 @@ window.onload = function init() {
 
         }
 
-        // let torsoRotate = -180;
-        // let forwardDirection = { x: 0, y: 0 };
         //오른쪽 키만
         if(!upKeyPressed && rightKeyPressed && !leftKeyPressed && !downKeyPressed){
             if (theta[head3Id] >= -HEAD_THROTLE) {
@@ -695,9 +698,8 @@ window.onload = function init() {
                 theta[leftBackWheelId2] -= 2;
                 theta[rightBackWheelId2] -= 2;
 
-                torsoRotate -= 10;
+                torsoRotate -= 5;
                 theta[torsoId] = torsoRotate;
-                initNodes(torsoId);
                 
                 initNodes(head3Id);
                 initNodes(rightUpperArmId2);
@@ -705,7 +707,8 @@ window.onload = function init() {
                 initNodes(leftFrontWheelId2);
                 initNodes(rightFrontWheelId2);  
                 initNodes(leftBackWheelId2);
-                initNodes(rightBackWheelId2);      
+                initNodes(rightBackWheelId2);  
+                initNodes(torsoId); 
             }
         }
 
@@ -720,9 +723,9 @@ window.onload = function init() {
                 theta[leftBackWheelId2] += 2;
                 theta[rightBackWheelId2] += 2;
 
-                torsoRotate += 10;
+                torsoRotate += 5;
                 theta[torsoId] = torsoRotate;
-                initNodes(torsoId);
+               
 
                 initNodes(head3Id);
                 initNodes(leftUpperArmId2);
@@ -731,6 +734,7 @@ window.onload = function init() {
                 initNodes(rightFrontWheelId2);
                 initNodes(leftBackWheelId2);
                 initNodes(rightBackWheelId2);  
+                initNodes(torsoId);
             }
         }
 
@@ -745,8 +749,11 @@ window.onload = function init() {
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
 
-            moveX -= Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
-            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
+            moveX -= Math.sin((Math.PI * theta[torsoId])/180) ;
+            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) ;
+
+            
+            initNodes(torsoId);
         }
 
         // 앞키 + 오른쪽 키
@@ -779,9 +786,10 @@ window.onload = function init() {
             }
             torsoRotate -= 3;
             theta[torsoId] = torsoRotate;
+            moveX -= Math.sin((Math.PI * theta[torsoId])/180) ;
+            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) ;
+
             initNodes(torsoId);
-            moveX -= Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
-            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
 
         // 앞키 + 왼쪽키
@@ -815,9 +823,11 @@ window.onload = function init() {
 
             torsoRotate += 3;
             theta[torsoId] = torsoRotate;
+            
+            moveX -= Math.sin((Math.PI * theta[torsoId])/180) ;
+            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) ;
+
             initNodes(torsoId);
-            moveX -= Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
-            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
 
 
@@ -836,9 +846,11 @@ window.onload = function init() {
             initNodes(rightFrontWheelId);
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
-            moveX += Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
-            moveZ += Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
-         
+
+            moveX += Math.sin((Math.PI * theta[torsoId])/180) ;
+            moveZ += Math.cos((Math.PI * theta[torsoId])/180) ;
+
+            initNodes(torsoId);
         }
 
         //뒷키 + 오른쪽키
@@ -873,9 +885,10 @@ window.onload = function init() {
             }
             torsoRotate += 3;
             theta[torsoId] = torsoRotate;
+            moveX += Math.sin((Math.PI * theta[torsoId])/180) ;
+            moveZ += Math.cos((Math.PI * theta[torsoId])/180) ;
+
             initNodes(torsoId);
-            moveX += Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
-            moveZ += Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
 
         if(downKeyPressed && leftKeyPressed){
@@ -910,9 +923,10 @@ window.onload = function init() {
             }
             torsoRotate -= 3;
             theta[torsoId] = torsoRotate;
+            moveX += Math.sin((Math.PI * theta[torsoId])/180) ;
+            moveZ += Math.cos((Math.PI * theta[torsoId])/180) ;
+
             initNodes(torsoId);
-            moveX += Math.sin((Math.PI * theta[torsoId])/180) * 0.01 ;
-            moveZ += Math.cos((Math.PI * theta[torsoId])/180) * 0.01 ;
         }
     });
     
@@ -935,7 +949,6 @@ window.onload = function init() {
             initNodes(head2Id);
         }
 
-
         if (e.key == 'ArrowRight' || e.key == 'ArrowLeft') {
             theta[head3Id] = 0;
             theta[leftUpperArmId2] = 0;
@@ -948,7 +961,6 @@ window.onload = function init() {
 
             theta[torsoRotate] =torsoRotate;
             initNodes(torsoRotate);
-
             initNodes(head3Id);
             initNodes(leftUpperArmId2);
             initNodes(rightUpperArmId2);
@@ -956,18 +968,10 @@ window.onload = function init() {
             initNodes(rightFrontWheelId2);
             initNodes(leftBackWheelId2);
             initNodes(rightBackWheelId2);
-            
-            moveX = 0;
-            moveZ = 0;
-        }
-
-        if(e.key == 'ArrowUp' || e.key == 'ArrowDown'){
-            moveZ = 0;
-            moveX = 0;
+          
         }
     });
     
-
     for(let i=0; i<numNodes; i++) initNodes(i);
 
     render();
@@ -978,21 +982,18 @@ let render = function() {
 
         gl.clear( gl.COLOR_BUFFER_BIT );
 
-        let translateMatrix = translate(moveX, moveY, moveZ);
+        let translateMatrix = translate(0.0,0.0,0.0);
         modelViewMatrix = mult(modelViewMatrix, translateMatrix); 
-        gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix));
-
-
-        // color setting
+        gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix))
+        // plane
         gl.uniform4f(colorLoc,255/256 ,243/256 ,79/256, 0.2);
-        // draw
         gl.drawArrays(gl.TRIANGLES,48,6);
-    
+
+        // track
         gl.uniform4f(colorLoc, 153/256, 56/256, 0.0, 1); !
-        gl.drawArrays(gl.TRIANGLES, 54, 6*12); 
+        gl.drawArrays(gl.TRIANGLES, 54, 24); 
 
         traverse(torsoId);
 
-   
         requestAnimFrame(render);
 }
