@@ -6,6 +6,7 @@ let program;
 
 let projectionMatrix;
 let modelViewMatrix;
+let backViewMatrix;
 
 let instanceMatrix;
 
@@ -49,32 +50,140 @@ let planeVertices = [
 
 //----- 점 위치 수정해주세요------- //
 var trackVertices = [
-    vec4(-3, -3.0, -100, 1.0),
-    vec4(10, -3.0, -100, 1.0),
-    vec4(-3, -3.0, -70, 1.0),
-    vec4(10, -3.0, -70, 1.0),
-    vec4(-6, -3.0, -55, 1.0),
-    vec4(7, -3.0, -55, 1.0),
-    vec4(-6, -3.0, -35, 1.0),
-    vec4(7, -3.0, -35, 1.0),
-    vec4(-9, -3.0, -20, 1.0),
-    vec4(4, -3.0, -20, 1.0),
-    vec4(-9, -3.0, -10, 1.0),
-    vec4(4, -3.0, -10, 1.0),
-    vec4(-6, -3.0, 5, 1.0),
-    vec4(7, -3.0, 5, 1.0),
-    vec4(-6, -3.0, 15, 1.0),
-    vec4(7, -3.0, 15, 1.0),
-    vec4(-9, -3.0, 30, 1.0),
-    vec4(4, -3.0, 30, 1.0),
-    vec4(-6, -3.0, 45, 1.0),
-    vec4(7, -3.0, 45, 1.0),
-    vec4(-6, -3.0, 60, 1.0),
-    vec4(7, -3.0, 60, 1.0),
-    vec4(-3, -3.0, 75, 1.0),
-    vec4(10, -3.0, 75, 1.0),
-    vec4(-3, -3.0, 100, 1.0),
-    vec4(10, -3.0, 100, 1.0),
+    vec4(-4, -3.0, -500, 1.0),
+    vec4(11, -3.0, -500, 1.0),
+    vec4(-4, -3.0, -470, 1.0),
+    vec4(11, -3.0, -470, 1.0),
+    vec4(-7, -3.0, -455, 1.0),
+    vec4(8, -3.0, -455, 1.0),
+    vec4(-7, -3.0, -435, 1.0),
+    vec4(8, -3.0, -435, 1.0),
+    vec4(-10, -3.0, -420, 1.0),
+    vec4(5, -3.0, -420, 1.0),
+    vec4(-10, -3.0, -410, 1.0),
+    vec4(5, -3.0, -410, 1.0),
+    vec4(-7, -3.0, -395, 1.0),
+    vec4(8, -3.0, -395, 1.0),
+    vec4(-7, -3.0, -385, 1.0),
+    vec4(8, -3.0, -385, 1.0),
+    vec4(-10, -3.0, -370, 1.0),
+    vec4(5, -3.0, -370, 1.0),
+    vec4(-7, -3.0, -355, 1.0),
+    vec4(8, -3.0, -355, 1.0),
+    vec4(-7, -3.0, -340, 1.0),
+    vec4(8, -3.0, -340, 1.0),
+    vec4(-4, -3.0, -325, 1.0),
+    vec4(11, -3.0, -325, 1.0),
+    vec4(-4, -3.0, -300, 1.0),
+    vec4(11, -3.0, -300, 1.0),
+
+    vec4(-4, -3.0, -300, 1.0),
+    vec4(11, -3.0, -300, 1.0),
+    vec4(-4, -3.0, -270, 1.0),
+    vec4(11, -3.0, -270, 1.0),
+    vec4(-7, -3.0, -255, 1.0),
+    vec4(8, -3.0, -255, 1.0),
+    vec4(-7, -3.0, -235, 1.0),
+    vec4(8, -3.0, -235, 1.0),
+    vec4(-10, -3.0, -220, 1.0),
+    vec4(5, -3.0, -220, 1.0),
+    vec4(-10, -3.0, -210, 1.0),
+    vec4(5, -3.0, -210, 1.0),
+    vec4(-7, -3.0, -195, 1.0),
+    vec4(8, -3.0, -195, 1.0),
+    vec4(-7, -3.0, -185, 1.0),
+    vec4(8, -3.0, -185, 1.0),
+    vec4(-10, -3.0, -170, 1.0),
+    vec4(5, -3.0, -170, 1.0),
+    vec4(-7, -3.0, -155, 1.0),
+    vec4(8, -3.0, -155, 1.0),
+    vec4(-7, -3.0, -140, 1.0),
+    vec4(8, -3.0, -140, 1.0),
+    vec4(-4, -3.0, -125, 1.0),
+    vec4(11, -3.0, -125, 1.0),
+    vec4(-4, -3.0, -100, 1.0),
+    vec4(11, -3.0, -100, 1.0),
+    
+    vec4(-4, -3.0, -100, 1.0),
+    vec4(11, -3.0, -100, 1.0),
+    vec4(-4, -3.0, -70, 1.0),
+    vec4(11, -3.0, -70, 1.0),
+    vec4(-7, -3.0, -55, 1.0),
+    vec4(8, -3.0, -55, 1.0),
+    vec4(-7, -3.0, -35, 1.0),
+    vec4(8, -3.0, -35, 1.0),
+    vec4(-10, -3.0, -20, 1.0),
+    vec4(5, -3.0, -20, 1.0),
+    vec4(-10, -3.0, -10, 1.0),
+    vec4(5, -3.0, -10, 1.0),
+    vec4(-7, -3.0, 5, 1.0),
+    vec4(8, -3.0, 5, 1.0),
+    vec4(-7, -3.0, 15, 1.0),
+    vec4(8, -3.0, 15, 1.0),
+    vec4(-10, -3.0, 30, 1.0),
+    vec4(5, -3.0, 30, 1.0),
+    vec4(-7, -3.0, 45, 1.0),
+    vec4(8, -3.0, 45, 1.0),
+    vec4(-7, -3.0, 60, 1.0),
+    vec4(8, -3.0, 60, 1.0),
+    vec4(-4, -3.0, 75, 1.0),
+    vec4(11, -3.0, 75, 1.0),
+    vec4(-4, -3.0, 100, 1.0),
+    vec4(11, -3.0, 100, 1.0),
+    
+    vec4(-4, -3.0, 100, 1.0),
+    vec4(11, -3.0, 100, 1.0),
+    vec4(-4, -3.0, 130, 1.0),
+    vec4(11, -3.0, 130, 1.0),
+    vec4(-7, -3.0, 145, 1.0),
+    vec4(8, -3.0, 145, 1.0),
+    vec4(-7, -3.0, 165, 1.0),
+    vec4(8, -3.0, 165, 1.0),
+    vec4(-10, -3.0, 180, 1.0),
+    vec4(5, -3.0, 180, 1.0),
+    vec4(-10, -3.0, 190, 1.0),
+    vec4(5, -3.0, 190, 1.0),
+    vec4(-7, -3.0, 205, 1.0),
+    vec4(7, -3.0, 205, 1.0),
+    vec4(-7, -3.0, 215, 1.0),
+    vec4(7, -3.0, 215, 1.0),
+    vec4(-10, -3.0, 230, 1.0),
+    vec4(5, -3.0, 230, 1.0),
+    vec4(-7, -3.0, 245, 1.0),
+    vec4(8, -3.0, 245, 1.0),
+    vec4(-7, -3.0, 260, 1.0),
+    vec4(8, -3.0, 260, 1.0),
+    vec4(-4, -3.0, 275, 1.0),
+    vec4(11, -3.0, 275, 1.0),
+    vec4(-4, -3.0, 300, 1.0),
+    vec4(11, -3.0, 300, 1.0),
+
+    vec4(-4, -3.0, 300, 1.0),
+    vec4(11, -3.0, 300, 1.0),
+    vec4(-4, -3.0, 330, 1.0),
+    vec4(11, -3.0, 330, 1.0),
+    vec4(-7, -3.0, 345, 1.0),
+    vec4(8, -3.0, 345, 1.0),
+    vec4(-7, -3.0, 365, 1.0),
+    vec4(8, -3.0, 365, 1.0),
+    vec4(-10, -3.0, 380, 1.0),
+    vec4(5, -3.0, 380, 1.0),
+    vec4(-10, -3.0, 390, 1.0),
+    vec4(5, -3.0, 390, 1.0),
+    vec4(-7, -3.0, 405, 1.0),
+    vec4(7, -3.0, 405, 1.0),
+    vec4(-7, -3.0, 415, 1.0),
+    vec4(7, -3.0, 415, 1.0),
+    vec4(-10, -3.0, 430, 1.0),
+    vec4(5, -3.0, 430, 1.0),
+    vec4(-7, -3.0, 445, 1.0),
+    vec4(8, -3.0, 445, 1.0),
+    vec4(-7, -3.0, 460, 1.0),
+    vec4(8, -3.0, 460, 1.0),
+    vec4(-4, -3.0, 475, 1.0),
+    vec4(11, -3.0, 475, 1.0),
+    vec4(-4, -3.0, 500, 1.0),
+    vec4(11, -3.0, 500, 1.0),
 ];
 
 
@@ -159,6 +268,8 @@ let materialShininess = 100.0;
 let moveX = 0.0;
 let moveY = 0.0;
 let moveZ = 0.0;
+
+let trackMove = 0.0;
 
 for( let i=0; i<numNodes; i++) figure[i] = createNode(null, null, null, null);
 
@@ -564,6 +675,7 @@ window.onload = function init() {
     aspect = canvas.width / canvas.height;
     projectionMatrix = perspective(fovy,aspect,near,far);
     modelViewMatrix = lookAt(eye,at,up);
+    backViewMatrix = modelViewMatrix;
 
     gl.uniformMatrix4fv(gl.getUniformLocation( program, "modelViewMatrix"), false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( gl.getUniformLocation( program, "projectionMatrix"), false, flatten(projectionMatrix) );
@@ -607,6 +719,7 @@ window.onload = function init() {
         eye[0] = event.target.value;
 
         modelViewMatrix = lookAt(eye,at,up);
+        backViewMatrix = modelViewMatrix;
 
     };
 
@@ -614,6 +727,7 @@ window.onload = function init() {
         eye[1] = event.target.value;
 
         modelViewMatrix = lookAt(eye,at,up);
+        backViewMatrix = modelViewMatrix;
 
     };
 
@@ -621,6 +735,7 @@ window.onload = function init() {
         eye[2] = event.target.value;
 
         modelViewMatrix = lookAt(eye,at,up);
+        backViewMatrix = modelViewMatrix;
 
     };
 
@@ -948,10 +1063,11 @@ let render = function() {
 
         gl.clear( gl.COLOR_BUFFER_BIT );
 
-        let translateMatrix = translate(moveX, moveY, moveZ);
-        modelViewMatrix = mult(modelViewMatrix, translateMatrix); 
-        gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix));
-
+        trackMove -= 0.01;
+        let trackMoveMatrix = translate(0, 0, trackMove);
+        backViewMatrix = mult(backViewMatrix, trackMoveMatrix)
+        gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(backViewMatrix));
+        trackMove = 0;
 
         // color setting
         gl.uniform4f(colorLoc,255/256 ,243/256 ,79/256, 0.2);
@@ -959,7 +1075,11 @@ let render = function() {
         gl.drawArrays(gl.TRIANGLES,48,6);
     
         gl.uniform4f(colorLoc, 153/256, 56/256, 0.0, 1); !
-        gl.drawArrays(gl.TRIANGLES, 54, 6*12); 
+        gl.drawArrays(gl.TRIANGLES, 54, 6*12*5); 
+
+        let translateMatrix = translate(moveX, moveY, moveZ);
+        modelViewMatrix = mult(modelViewMatrix, translateMatrix); 
+        gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix));
 
         traverse(torsoId);
 
