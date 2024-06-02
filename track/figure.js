@@ -6,6 +6,7 @@ let program;
 
 let projectionMatrix;
 let modelViewMatrix;
+let backViewMatrix;
 
 let instanceMatrix;
 let modelViewMatrixLoc;
@@ -39,15 +40,154 @@ let vertices2 = [
 ];
 
 let planeVertices = [
-    vec4(-1000.0, -3.0,  -1000.0, 1.0),
-    vec4(-1000.0, -3.0,  1000.0 , 1.0),
-    vec4(1000.0 , -3.0,  1000.0 , 1.0),
-    vec4(1000.0, -3.0,  -1000.0, 1.0),
+    vec4(-1000.0, -3.1,  -1000.0, 1.0),
+    vec4(-1000.0, -3.1,  1000.0 , 1.0),
+    vec4(1000.0 , -3.1,  1000.0 , 1.0),
+    vec4(1000.0, -3.1,  -1000.0, 1.0),
+];
+
+let trackVertices = [
+    vec4(-4, -2.9, -500, 1.0),
+    vec4(11, -2.9, -500, 1.0),
+    vec4(-4, -2.9, -470, 1.0),
+    vec4(11, -2.9, -470, 1.0),
+    vec4(-7, -2.9, -455, 1.0),
+    vec4(8, -2.9, -455, 1.0),
+    vec4(-7, -2.9, -435, 1.0),
+    vec4(8, -2.9, -435, 1.0),
+    vec4(-10, -2.9, -420, 1.0),
+    vec4(5, -2.9, -420, 1.0),
+    vec4(-10, -2.9, -410, 1.0),
+    vec4(5, -2.9, -410, 1.0),
+    vec4(-7, -2.9, -395, 1.0),
+    vec4(8, -2.9, -395, 1.0),
+    vec4(-7, -2.9, -385, 1.0),
+    vec4(8, -2.9, -385, 1.0),
+    vec4(-10, -2.9, -370, 1.0),
+    vec4(5, -2.9, -370, 1.0),
+    vec4(-7, -2.9, -355, 1.0),
+    vec4(8, -2.9, -355, 1.0),
+    vec4(-7, -2.9, -340, 1.0),
+    vec4(8, -2.9, -340, 1.0),
+    vec4(-4, -2.9, -325, 1.0),
+    vec4(11, -2.9, -325, 1.0),
+    vec4(-4, -2.9, -300, 1.0),
+    vec4(11, -2.9, -300, 1.0),
+
+    vec4(-4, -2.9, -300, 1.0),
+    vec4(11, -2.9, -300, 1.0),
+    vec4(-4, -2.9, -270, 1.0),
+    vec4(11, -2.9, -270, 1.0),
+    vec4(-7, -2.9, -255, 1.0),
+    vec4(8, -2.9, -255, 1.0),
+    vec4(-7, -2.9, -235, 1.0),
+    vec4(8, -2.9, -235, 1.0),
+    vec4(-10, -2.9, -220, 1.0),
+    vec4(5, -2.9, -220, 1.0),
+    vec4(-10, -2.9, -210, 1.0),
+    vec4(5, -2.9, -210, 1.0),
+    vec4(-7, -2.9, -195, 1.0),
+    vec4(8, -2.9, -195, 1.0),
+    vec4(-7, -2.9, -185, 1.0),
+    vec4(8, -2.9, -185, 1.0),
+    vec4(-10, -2.9, -170, 1.0),
+    vec4(5, -2.9, -170, 1.0),
+    vec4(-7, -2.9, -155, 1.0),
+    vec4(8, -2.9, -155, 1.0),
+    vec4(-7, -2.9, -140, 1.0),
+    vec4(8, -2.9, -140, 1.0),
+    vec4(-4, -2.9, -125, 1.0),
+    vec4(11, -2.9, -125, 1.0),
+    vec4(-4, -2.9, -100, 1.0),
+    vec4(11, -2.9, -100, 1.0),
+    
+    vec4(-4, -2.9, -100, 1.0),
+    vec4(11, -2.9, -100, 1.0),
+    vec4(-4, -2.9, -70, 1.0),
+    vec4(11, -2.9, -70, 1.0),
+    vec4(-7, -2.9, -55, 1.0),
+    vec4(8, -2.9, -55, 1.0),
+    vec4(-7, -2.9, -35, 1.0),
+    vec4(8, -2.9, -35, 1.0),
+    vec4(-10, -2.9, -20, 1.0),
+    vec4(5, -2.9, -20, 1.0),
+    vec4(-10, -2.9, -10, 1.0),
+    vec4(5, -2.9, -10, 1.0),
+    vec4(-7, -2.9, 5, 1.0),
+    vec4(8, -2.9, 5, 1.0),
+    vec4(-7, -2.9, 15, 1.0),
+    vec4(8, -2.9, 15, 1.0),
+    vec4(-10, -2.9, 30, 1.0),
+    vec4(5, -2.9, 30, 1.0),
+    vec4(-7, -2.9, 45, 1.0),
+    vec4(8, -2.9, 45, 1.0),
+    vec4(-7, -2.9, 60, 1.0),
+    vec4(8, -2.9, 60, 1.0),
+    vec4(-4, -2.9, 75, 1.0),
+    vec4(11, -2.9, 75, 1.0),
+    vec4(-4, -2.9, 100, 1.0),
+    vec4(11, -2.9, 100, 1.0),
+    
+    vec4(-4, -2.9, 100, 1.0),
+    vec4(11, -2.9, 100, 1.0),
+    vec4(-4, -2.9, 130, 1.0),
+    vec4(11, -2.9, 130, 1.0),
+    vec4(-7, -2.9, 145, 1.0),
+    vec4(8, -2.9, 145, 1.0),
+    vec4(-7, -2.9, 165, 1.0),
+    vec4(8, -2.9, 165, 1.0),
+    vec4(-10, -2.9, 180, 1.0),
+    vec4(5, -2.9, 180, 1.0),
+    vec4(-10, -2.9, 190, 1.0),
+    vec4(5, -2.9, 190, 1.0),
+    vec4(-7, -2.9, 205, 1.0),
+    vec4(7, -2.9, 205, 1.0),
+    vec4(-7, -2.9, 215, 1.0),
+    vec4(7, -2.9, 215, 1.0),
+    vec4(-10, -2.9, 230, 1.0),
+    vec4(5, -2.9, 230, 1.0),
+    vec4(-7, -2.9, 245, 1.0),
+    vec4(8, -2.9, 245, 1.0),
+    vec4(-7, -2.9, 260, 1.0),
+    vec4(8, -2.9, 260, 1.0),
+    vec4(-4, -2.9, 275, 1.0),
+    vec4(11, -2.9, 275, 1.0),
+    vec4(-4, -2.9, 300, 1.0),
+    vec4(11, -2.9, 300, 1.0),
+
+    vec4(-4, -2.9, 300, 1.0),
+    vec4(11, -2.9, 300, 1.0),
+    vec4(-4, -2.9, 330, 1.0),
+    vec4(11, -2.9, 330, 1.0),
+    vec4(-7, -2.9, 345, 1.0),
+    vec4(8, -2.9, 345, 1.0),
+    vec4(-7, -2.9, 365, 1.0),
+    vec4(8, -2.9, 365, 1.0),
+    vec4(-10, -2.9, 380, 1.0),
+    vec4(5, -2.9, 380, 1.0),
+    vec4(-10, -2.9, 390, 1.0),
+    vec4(5, -2.9, 390, 1.0),
+    vec4(-7, -2.9, 405, 1.0),
+    vec4(7, -2.9, 405, 1.0),
+    vec4(-7, -2.9, 415, 1.0),
+    vec4(7, -2.9, 415, 1.0),
+    vec4(-10, -2.9, 430, 1.0),
+    vec4(5, -2.9, 430, 1.0),
+    vec4(-7, -2.9, 445, 1.0),
+    vec4(8, -2.9, 445, 1.0),
+    vec4(-7, -2.9, 460, 1.0),
+    vec4(8, -2.9, 460, 1.0),
+    vec4(-4, -2.9, 475, 1.0),
+    vec4(11, -2.9, 475, 1.0),
+    vec4(-4, -2.9, 500, 1.0),
+    vec4(11, -2.9, 500, 1.0),
 ];
 
 
 
-const HEAD_THROTLE = 15;
+const HEAD_THRESHOLD = 15;
+const SPEED = 2;
+const Z_OFFSET = 40;
 
 
 let torsoId = 0;
@@ -103,14 +243,21 @@ let theta = [torsoRotate, 0, 0, 0, 70, 70,
 
 let numVertices = 24;
 
-
 let stack = [];
 let figure = [];
 let normalsArray = [];
 
 let eye=[0,2.0,40];
+let prevEye = [0,2.0,40];
 let up = [0,1,0];
 let at = [0,0,0];
+let current = [0,10,0];
+let prev = [0,9,0];
+
+let thirdView = false;
+let firstView = false;
+let drivingView = false;
+let frontView = true;
 
 let fovy = 45;
 let aspect ;
@@ -129,6 +276,12 @@ let materialShininess = 100.0;
 let moveX = 0.0;
 let moveY = 0.0;
 let moveZ = 0.0;
+let deltaX = 0.0;
+let deltaZ= -2.0;
+
+let trackMove = 0.0;
+
+let space = true;
 
 for( let i=0; i<numNodes; i++) figure[i] = createNode(null, null, null, null);
 
@@ -305,7 +458,6 @@ function torso() {
     for(let i =6; i<12; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
-//-- 캐릭터 모델링 초기 설정 --------------------------------//
 function head() {
     instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.5 * headHeight, 0.0 ));
 	instanceMatrix = mult(instanceMatrix, scale4(headWidth, headHeight, headWidth) );
@@ -479,44 +631,17 @@ function plane(){
     normalsArray.push(normal);
 }
 
-function track(){
-    let t1 = subtract(planeVertices[0], planeVertices[1]);
-    let t2 = subtract(planeVertices[3], planeVertices[0]);
+function quad3(a, b, c, d) {
+    let t1 = subtract(trackVertices[b], trackVertices[a]);
+    let t2 = subtract(trackVertices[c], trackVertices[b]);
     let normal = cross(t1, t2);
 
-
-    // 아래 직선
-    pointsArray.push(vec4(-50,-2.9,-50,1.0));
-    pointsArray.push(vec4(50,-2.9,-50,1.0));
-    pointsArray.push(vec4(50,-2.9,-100,1.0));
-    pointsArray.push(vec4(50,-2.9,-100,1.0));
-    pointsArray.push(vec4(-50,-2.9,-100,1.0));
-    pointsArray.push(vec4(-50,-2.9,-50,1.0));
-
-    // 오른쪽 직선
-    pointsArray.push(vec4(50,-2.9,-100,1.0));
-    pointsArray.push(vec4(50,-2.9,100,1.0));
-    pointsArray.push(vec4(100,-2.9,100,1.0));
-    pointsArray.push(vec4(100,-2.9,100,1.0));
-    pointsArray.push(vec4(100,-2.9,-100,1.0));
-    pointsArray.push(vec4(50,-2.9,-100,1.0));
-
-    // 위에 직선
-    pointsArray.push(vec4(100,-2.9,100,1.0));
-    pointsArray.push(vec4(100,-2.9,50,1.0));
-    pointsArray.push(vec4(-100,-2.9,50,1.0));
-    pointsArray.push(vec4(-100,-2.9,50,1.0));
-    pointsArray.push(vec4(-100,-2.9,100,1.0));
-    pointsArray.push(vec4(100,-2.9,100,1.0));
-
-    //왼쪽 직선
-    pointsArray.push(vec4(-100,-2.9,50,1.0));
-    pointsArray.push(vec4(-50,-2.9,50,1.0));
-    pointsArray.push(vec4(-50,-2.9,-100,1.0));
-    pointsArray.push(vec4(-50,-2.9,-100,1.0));
-    pointsArray.push(vec4(-100,-2.9,-100,1.0));
-    pointsArray.push(vec4(-100,-2.9,50,1.0));
-
+    pointsArray.push(trackVertices[a]);
+    pointsArray.push(trackVertices[b]);
+    pointsArray.push(trackVertices[c]);
+    pointsArray.push(trackVertices[b]);
+    pointsArray.push(trackVertices[c]);
+    pointsArray.push(trackVertices[d]);
 
     normalsArray.push(normal);
     normalsArray.push(normal);
@@ -524,32 +649,51 @@ function track(){
     normalsArray.push(normal);
     normalsArray.push(normal);
     normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-
 }
+
+function track(){
+    for(var i=0; i<trackVertices.length-2; i+=2){
+        quad3(i, i+1, i+2, i+3);
+    }
+}
+
+function mode_thirdPersonView(){
+    eye[0] = 69;
+    eye[1] = 91;
+    eye[2] = 81;
+
+    at[0] = current[0] - deltaX * 5 ;
+    at[1] = 0;
+    at[2] = current[2] - deltaZ * 5;
+
+    thirdView = true;
+    drivingView = false;
+
+    modelViewMatrix = lookAt(eye,at,up);
+    backViewMatrix = modelViewMatrix;
+}
+
+function mode_drivingView(){
+     
+
+
+    eye[0] = current[0] 
+    eye[1] = current[1] + 5;
+    eye[2] = current[2] 
+
+    at[0] = current[0] - deltaX * 5 ;
+    at[1] = current[1];
+    at[2] = current[2] - deltaZ * 5; 
+
+   
+    drivingView = true;
+    thirdView = false;
+
+    modelViewMatrix = lookAt(eye,at,up);
+    backViewMatrix = modelViewMatrix;
+}
+
+
 
 
 // ------------------- 렌더링 ------------------//
@@ -572,6 +716,7 @@ window.onload = function init() {
     aspect = canvas.width / canvas.height;
     projectionMatrix = perspective(fovy,aspect,near,far);
     modelViewMatrix = lookAt(eye,at,up);
+    backViewMatrix = modelViewMatrix;
 
     gl.uniformMatrix4fv(gl.getUniformLocation( program, "modelViewMatrix"), false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( gl.getUniformLocation( program, "projectionMatrix"), false, flatten(projectionMatrix) );
@@ -616,6 +761,7 @@ window.onload = function init() {
         eye[0] = event.target.value;
 
         modelViewMatrix = lookAt(eye,at,up);
+        backViewMatrix = modelViewMatrix;
 
     };
 
@@ -623,14 +769,39 @@ window.onload = function init() {
         eye[1] = event.target.value;
 
         modelViewMatrix = lookAt(eye,at,up);
+        backViewMatrix = modelViewMatrix;
 
     };
 
     document.getElementById("zSlider").onchange = function(event) {
         eye[2] = event.target.value;
         modelViewMatrix = lookAt(eye,at,up);
+        backViewMatrix = modelViewMatrix;
+        console.log(eye);
 
     };
+
+    const ceremonyButton = document.getElementById("ceremonyButton");
+
+    ceremonyButton.addEventListener('click', function() {
+        // 2초 동안 반복 실행
+        let intervalId = setInterval(ceremony, 1000 / 60); // 60fps로 애니메이션 실행
+
+        // 2초 후에 애니메이션 중지
+        setTimeout(() => {
+            clearInterval(intervalId);
+        }, 5800);
+    });
+
+    const THIRD_PERSON_VIEW = document.querySelector(".thirdPersonView");
+    THIRD_PERSON_VIEW.addEventListener("click", (e) => {
+        mode_thirdPersonView();
+    });
+
+    const DRIVING_VIEW = document.querySelector(".drivingView");
+    DRIVING_VIEW.addEventListener("click", (e) => {
+        mode_drivingView();        
+    });
 
     let upKeyPressed = false;
     let rightKeyPressed = false;
@@ -661,7 +832,7 @@ window.onload = function init() {
 
         if (e.code === 'Space') {
 
-                if (theta[head3Id] >= -HEAD_THROTLE && space == true) {
+                if (theta[head3Id] >= -HEAD_THRESHOLD && space == true) {
                     theta[head3Id] -= 1;
                     theta[leftUpperArmId2] += 2;
                     theta[rightUpperArmId2] += 2;
@@ -669,18 +840,18 @@ window.onload = function init() {
                     initNodes(head3Id);
                     initNodes(rightUpperArmId2);
                     initNodes(leftUpperArmId2);
-                    if (theta[head3Id] <= -HEAD_THROTLE){
+                    if (theta[head3Id] <= -HEAD_THRESHOLD){
                         space = false;
                     }     
                 }
-                else if (theta[head3Id] <= HEAD_THROTLE && space == false) {
+                else if (theta[head3Id] <= HEAD_THRESHOLD && space == false) {
                     theta[head3Id] += 1;
                     theta[leftUpperArmId2] -= 2;
                     theta[rightUpperArmId2] -= 2;
                     initNodes(head3Id);
                     initNodes(leftUpperArmId2);
                     initNodes(rightUpperArmId2); 
-                    if (theta[head3Id] >= HEAD_THROTLE){
+                    if (theta[head3Id] >= HEAD_THRESHOLD){
                         space = true;
                     }
                 }
@@ -689,7 +860,7 @@ window.onload = function init() {
 
         //오른쪽 키만
         if(!upKeyPressed && rightKeyPressed && !leftKeyPressed && !downKeyPressed){
-            if (theta[head3Id] >= -HEAD_THROTLE) {
+            if (theta[head3Id] >= -HEAD_THRESHOLD) {
                 theta[head3Id] -= 1;
                 theta[leftUpperArmId2] -= 2;
                 theta[rightUpperArmId2] -= 2;
@@ -714,7 +885,7 @@ window.onload = function init() {
 
          //왼쪽 키만
          if(!upKeyPressed && !rightKeyPressed && leftKeyPressed && !downKeyPressed){
-            if (theta[head3Id] <= HEAD_THROTLE) {
+            if (theta[head3Id] <= HEAD_THRESHOLD) {
                 theta[head3Id] += 1;
                 theta[leftUpperArmId2] += 2;
                 theta[rightUpperArmId2] += 2;
@@ -749,11 +920,23 @@ window.onload = function init() {
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
 
-            moveX -= Math.sin((Math.PI * theta[torsoId])/180) ;
-            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) ;
-
             
+            deltaX = Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            deltaZ = Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+            moveX -= deltaX;
+            moveZ -= deltaZ ;
+            current[0] -= deltaX;
+            current[2] -= deltaZ;
+           
             initNodes(torsoId);
+
+            if(drivingView){
+                mode_drivingView();
+            }
+            else if(thirdView){
+                mode_thirdPersonView();
+            }
+            
         }
 
         // 앞키 + 오른쪽 키
@@ -767,7 +950,7 @@ window.onload = function init() {
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
            
-            if (theta[head3Id] >= -HEAD_THROTLE) {
+            if (theta[head3Id] >= -HEAD_THRESHOLD) {
                 theta[head3Id] -= 1;
                 theta[leftUpperArmId2] -= 2;
                 theta[rightUpperArmId2] -= 2;
@@ -786,10 +969,23 @@ window.onload = function init() {
             }
             torsoRotate -= 3;
             theta[torsoId] = torsoRotate;
-            moveX -= Math.sin((Math.PI * theta[torsoId])/180) ;
-            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) ;
+            deltaX = Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            deltaZ = Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+            moveX -= deltaX;
+            moveZ -= deltaZ ;
+            current[0] -= deltaX;
+            current[2] -= deltaZ;
+           
 
             initNodes(torsoId);
+
+            if(drivingView){
+                mode_drivingView();
+            }
+            else if(thirdView){
+                mode_thirdPersonView();
+            }
+
         }
 
         // 앞키 + 왼쪽키
@@ -804,7 +1000,7 @@ window.onload = function init() {
             initNodes(rightBackWheelId);
       
 
-            if (theta[head3Id] <= HEAD_THROTLE) {
+            if (theta[head3Id] <= HEAD_THRESHOLD) {
                 theta[head3Id] += 1;
                 theta[leftUpperArmId2] += 2;
                 theta[rightUpperArmId2] += 2;
@@ -824,10 +1020,21 @@ window.onload = function init() {
             torsoRotate += 3;
             theta[torsoId] = torsoRotate;
             
-            moveX -= Math.sin((Math.PI * theta[torsoId])/180) ;
-            moveZ -= Math.cos((Math.PI * theta[torsoId])/180) ;
-
+            deltaX = Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            deltaZ = Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+            moveX -= deltaX;
+            moveZ -= deltaZ ;
+            current[0] -= deltaX;
+            current[2] -= deltaZ;
+           
             initNodes(torsoId);
+
+            if(drivingView){
+                mode_drivingView();
+            }
+            else if(thirdView){
+                mode_thirdPersonView();
+            }
         }
 
 
@@ -847,10 +1054,27 @@ window.onload = function init() {
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
 
-            moveX += Math.sin((Math.PI * theta[torsoId])/180) ;
-            moveZ += Math.cos((Math.PI * theta[torsoId])/180) ;
+            // moveX += Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            // moveZ += Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+
+            deltaX = Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            deltaZ = Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+            moveX += deltaX;
+            moveZ += deltaZ ;
+            current[0] += deltaX;
+            current[2] += deltaZ;
+
+            if(drivingView){
+                mode_drivingView();
+            }
+            else if(thirdView){
+                mode_thirdPersonView();
+            }
+           
 
             initNodes(torsoId);
+
+            
         }
 
         //뒷키 + 오른쪽키
@@ -868,7 +1092,7 @@ window.onload = function init() {
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
 
-            if (theta[head3Id] >= -HEAD_THROTLE) {
+            if (theta[head3Id] >= -HEAD_THRESHOLD) {
                 theta[head3Id] -= 1;
                 theta[leftUpperArmId2] -= 2;
                 theta[rightUpperArmId2] -= 2;
@@ -885,12 +1109,28 @@ window.onload = function init() {
             }
             torsoRotate += 3;
             theta[torsoId] = torsoRotate;
-            moveX += Math.sin((Math.PI * theta[torsoId])/180) ;
-            moveZ += Math.cos((Math.PI * theta[torsoId])/180) ;
+            // moveX += Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            // moveZ += Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+
+            deltaX = Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            deltaZ = Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+            moveX += deltaX;
+            moveZ += deltaZ ;
+            current[0] += deltaX;
+            current[2] += deltaZ;
 
             initNodes(torsoId);
+
+            if(drivingView){
+                mode_drivingView();
+            }
+            else if(thirdView){
+                mode_thirdPersonView();
+            }
+            
         }
 
+        //뒷키 + 왼쪽키
         if(downKeyPressed && leftKeyPressed){
             theta[rightFrontWheelId] += 10;
             theta[leftFrontWheelId] += 10;
@@ -906,7 +1146,7 @@ window.onload = function init() {
             initNodes(leftBackWheelId);
             initNodes(rightBackWheelId);
 
-            if (theta[head3Id] <= HEAD_THROTLE) {
+            if (theta[head3Id] <= HEAD_THRESHOLD) {
                 theta[head3Id] += 1;
                 theta[leftUpperArmId2] += 2;
                 theta[rightUpperArmId2] += 2;
@@ -923,11 +1163,28 @@ window.onload = function init() {
             }
             torsoRotate -= 3;
             theta[torsoId] = torsoRotate;
-            moveX += Math.sin((Math.PI * theta[torsoId])/180) ;
-            moveZ += Math.cos((Math.PI * theta[torsoId])/180) ;
+            // moveX += Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            // moveZ += Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+
+            deltaX = Math.sin((Math.PI * theta[torsoId])/180)*SPEED ;
+            deltaZ = Math.cos((Math.PI * theta[torsoId])/180)*SPEED ;
+            moveX += deltaX;
+            moveZ += deltaZ ;
+            current[0] += deltaX;
+            current[2] += deltaZ;
 
             initNodes(torsoId);
+
+            if(drivingView){
+                mode_drivingView();
+            }
+            else if(thirdView){
+                mode_thirdPersonView();
+            }
+            
         }
+
+
     });
     
     document.addEventListener("keyup", (e) => {
@@ -977,23 +1234,55 @@ window.onload = function init() {
     render();
 }
 
+function ceremony() {
+    if (theta[head3Id] >= -HEAD_THRESHOLD && space == true) {
+        theta[head3Id] -= 1;
+        theta[leftUpperArmId2] += 2;
+        theta[rightUpperArmId2] += 2;
+
+        initNodes(head3Id);
+        initNodes(rightUpperArmId2);
+        initNodes(leftUpperArmId2);
+
+        if (theta[head3Id] <= -HEAD_THRESHOLD) {
+            space = false;
+        }
+    } else if (theta[head3Id] <= HEAD_THRESHOLD && space == false) {
+        theta[head3Id] += 1;
+        theta[leftUpperArmId2] -= 2;
+        theta[rightUpperArmId2] -= 2;
+
+        initNodes(head3Id);
+        initNodes(leftUpperArmId2);
+        initNodes(rightUpperArmId2);
+
+        if (theta[head3Id] >= HEAD_THRESHOLD) {
+            space = true;
+        }
+    }
+}
+
 
 let render = function() {
 
-        gl.clear( gl.COLOR_BUFFER_BIT );
+    gl.clear( gl.COLOR_BUFFER_BIT );
 
-        let translateMatrix = translate(0.0,0.0,0.0);
-        modelViewMatrix = mult(modelViewMatrix, translateMatrix); 
-        gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix))
-        // plane
-        gl.uniform4f(colorLoc,255/256 ,243/256 ,79/256, 0.2);
-        gl.drawArrays(gl.TRIANGLES,48,6);
+    trackMove -= 0.01;
+    let trackMoveMatrix = translate(0, 0, trackMove);
+    backViewMatrix = mult(backViewMatrix, trackMoveMatrix);
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(backViewMatrix));
+    trackMove = 0;
 
-        // track
-        gl.uniform4f(colorLoc, 153/256, 56/256, 0.0, 1); !
-        gl.drawArrays(gl.TRIANGLES, 54, 24); 
+    // color setting
+    gl.uniform4f(colorLoc,255/256 ,243/256 ,79/256, 0.2);
+    // draw
+    gl.drawArrays(gl.TRIANGLES,48,6);
 
-        traverse(torsoId);
+    gl.uniform4f(colorLoc, 153/256, 56/256, 0.0, 1);
+    gl.drawArrays(gl.TRIANGLES, 54, 6*12*5); 
 
-        requestAnimFrame(render);
+    gl.uniformMatrix4fv(modelViewMatrixLoc,false,flatten(modelViewMatrix));
+
+    traverse(torsoId);
+    requestAnimFrame(render);
 }
