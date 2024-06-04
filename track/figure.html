@@ -64,8 +64,8 @@ void main()
 <script type="text/javascript" src="../Common/MV.js"></script>
 <script type="text/javascript" src="figure.js"></script>
 
-<div style="display: flex">
-
+<div style="display: flex;">
+<div style="width : 300px">
     <div>
     X 좌표 -100 <input id="xSlider" type="range"
     min="-100" max="100" step="1" value="0"
@@ -78,24 +78,25 @@ void main()
     />
     100
     </div>    
-    <div>
+    <div >
     Z 좌표 -100 <input id="zSlider" type="range"
     min="0" max="200" step="1" value="0"
     />
     1000
     </div>
 </div>
-<div>
+<div style="width : 500px">
     <h3>camera mode</h3>
     <button class="thirdPersonView">3인칭 고정 카메라(third Person View , Fixed)</button>
     <button class="drivingView">1인칭 카메라(first Person View)</button>
 </div>
 <div>
+    <h3>세레모니</h3>
     <button id="ceremonyButton">
         세레모니(ceremony)
     </button>
 </div>
-
+</div>
 
 
 <body>

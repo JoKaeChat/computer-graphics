@@ -414,6 +414,7 @@ function initNodes(Id) {
 
    m = translate(-(carWidth/2), 0.0 ,  carZ*0.3 );
    m = mult(m, rotate(theta[leftBackWheelId], 1, 0, 0));
+   m = mult(m, rotate(theta[leftBackWheelId2], 0, 1, 0));
    figure[leftBackWheelId] = createNode(m, leftBackWheel, rightFrontWheelId, null);
    break;
 
