@@ -23,7 +23,10 @@ webgl을 이용한 3d 계층 모델 만들기
 
 ### 데모 비디오
 
-https://github.com/JoKaeChat/computer-graphics/assets/126458067/5c6db886-9e43-4e5c-85f6-70d39fcbd0d3
+
+
+https://github.com/JoKaeChat/computer-graphics/assets/126458067/68b24610-3800-47ed-9d0b-f229ea430995
+
 
 
 
