@@ -1,5 +1,8 @@
 # 컴퓨터 그래픽스 Hierarchy mode 만들기
 
+### 직접 플레이해보기
+https://jokaechat.github.io/computer-graphics/
+
 ### 개요
 webgl을 이용한 3d 계층 모델 만들기
 
