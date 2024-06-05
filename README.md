@@ -9,6 +9,8 @@ webgl을 이용한 3d 계층 모델 만들기
 ### 제작 기간
 2023.05.26 ~ 2023.06.04
 
+<img width="500" alt="스크린샷 2024-06-05 오전 11 26 21" src="https://github.com/JoKaeChat/computer-graphics/assets/126458067/425876de-a7ca-4bd9-9f08-96d8602b04a7">
+
 ### 주요 기능
 
 - [x] 방향키에 따라 모델 이동 및 고개, 팔, 바퀴 회전
