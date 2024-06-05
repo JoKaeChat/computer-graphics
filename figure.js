@@ -201,6 +201,8 @@ let leftUpperArmId = 4;
 let rightUpperArmId = 5;
 let leftUpperArmId2 = 20;
 let rightUpperArmId2 = 19;
+let leftLowerArmId = 21;
+let rightLowerArmId = 22;
 let carId = 6;
 let leftFrontWheelId = 7;
 let leftBackWheelId = 8;
@@ -229,16 +231,16 @@ let earHeight = 2.0;
 let handWidth = 2.0;
 let handHeight = 1.0;
 
-let numNodes = 22;
+let numNodes = 23;
 let angle = 0;
 
 let torsoRotate = -180;
 
 let theta = [torsoRotate, 0, 0, 0, 70, 70,
                 0, 0,0,0,0, 
+                30,30,0,0,0,
                 0,0,0,0,0,
-                0,0,0,0,0,
-                0,0,0,0,0,
+                20,20,0,0,0,
                 0,0,0,0,0];
 
 let numVertices = 24;
@@ -365,7 +367,21 @@ function initNodes(Id) {
     m = translate(-(torsoWidth), 0.6*torsoHeight, -2.0);
 	m = mult(m, rotate(theta[leftUpperArmId], 1, 0, 0));
     m = mult(m, rotate(theta[leftUpperArmId2], 0, 1, 0));
-    figure[leftUpperArmId] = createNode( m, leftUpperArm, rightUpperArmId, leftHandId );
+    figure[leftUpperArmId] = createNode( m, leftUpperArm, rightUpperArmId, leftLowerArmId );
+    break;
+
+    case leftLowerArmId:
+    
+    m = translate(0.0, -0.1*torsoHeight, 0.0);
+	m = mult(m, rotate(theta[leftLowerArmId], 1, 0, 0));
+    figure[leftLowerArmId] = createNode( m, leftLowerArm, leftHandId );
+    break;
+
+    case leftHandId:
+
+    m = translate(0.0, -3*handHeight, -1.0);
+	m = mult(m, rotate(theta[leftHandId], 1, 0, 0));
+    figure[leftHandId] = createNode( m, leftHand, null, null );
     break;
 
 
@@ -375,23 +391,22 @@ function initNodes(Id) {
     m = translate(torsoWidth, 0.6*torsoHeight, -2.0);
 	m = mult(m, rotate(theta[rightUpperArmId], 1, 0, 0));
     m = mult(m, rotate(theta[rightUpperArmId2], 0, 1, 0));
-    figure[rightUpperArmId] = createNode( m, rightUpperArm, carId, rightHandId );
+    figure[rightUpperArmId] = createNode( m, rightUpperArm, carId, rightLowerArmId );
     break;
 
-    case leftHandId:
-
-    m = translate(0.0, -handHeight, 0.0);
-	m = mult(m, rotate(theta[leftHandId], 1, 0, 0));
-    figure[leftHandId] = createNode( m, leftHand, rightHandId, null );
+    case rightLowerArmId:
+    
+    m = translate(0.0, -0.1*torsoHeight, 0.0);
+	m = mult(m, rotate(theta[rightLowerArmId], 1, 0, 0));
+    figure[rightLowerArmId] = createNode( m, rightLowerArm, rightHandId );
     break;
-
+    
     case rightHandId:
 
-    m = translate(0.0, -handHeight, 0.0);
+    m = translate(0.0, -3*handHeight, -1.0);
 	m = mult(m, rotate(theta[rightHandId], 1, 0, 0));
     figure[rightHandId] = createNode( m, rightHand, null, null );
     break;
-
 
    case carId:
         
@@ -488,12 +503,26 @@ function leftUpperArm() {
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
+function leftLowerArm() {
+    instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.0, 0.0) );
+	instanceMatrix = mult(instanceMatrix, scale4(upperArmWidth, upperArmHeight, upperArmWidth) );
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
+    for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
+}
+
 function rightUpperArm() {
 
     instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.5 * upperArmHeight, 0.0) );
 	instanceMatrix = mult(instanceMatrix, scale4(upperArmWidth, upperArmHeight, upperArmWidth) );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
     gl.uniform4f(colorLoc,1/256,119/256,204/256, 1.0); // blue
+    for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
+}
+
+function rightLowerArm() {
+    instanceMatrix = mult(modelViewMatrix, translate(0.0, 0.0, 0.0) );
+	instanceMatrix = mult(instanceMatrix, scale4(upperArmWidth, upperArmHeight, upperArmWidth) );
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
     for(let i =0; i<6; i++) gl.drawArrays(gl.TRIANGLE_FAN, 4*i, 4);
 }
 
